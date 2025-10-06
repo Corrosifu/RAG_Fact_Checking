@@ -3,7 +3,7 @@ import requests
 import feedparser
 import json
 import pdfplumber
-import camelot
+import camelot.io as camelot
 import fitz
 
 ARXIV_API_URL = "http://export.arxiv.org/api/query"
@@ -65,13 +65,13 @@ def extract_text(pdf_path):
 
 
 
-def extract_tables(pdf_path):
+"""def extract_tables(pdf_path):
     tables = camelot.read_pdf(pdf_path, pages='all')
-    return [table.df for table in tables]
+    return [table.df for table in tables]"""
 
 
 
-def extract_images(pdf_path):
+"""def extract_images(pdf_path):
     doc = fitz.open(pdf_path)
     images = []
     for page_index in range(len(doc)):
@@ -81,5 +81,67 @@ def extract_images(pdf_path):
             xref = img[0]
             base_image = doc.extract_image(xref)
             image_bytes = base_image["image"]
-            images.append(image_bytes)  # à sauvegarder ou traiter
-    return images
+            image_ext = base_image.get("ext", "png")
+            images.append({
+                "xref": xref,
+                "image_bytes": image_bytes,
+                "ext": image_ext
+            })
+    doc.close()
+    return images"""
+
+
+def extract_all_content(articles, base_dir):
+
+    dataset = []
+    for article in articles:
+        pdf_filename = article["id"].replace('/', '_') + ".pdf"
+        pdf_path = os.path.join(base_dir, pdf_filename)
+        if not os.path.exists(pdf_path):
+            print(f"PDF manquant: {pdf_path}")
+            continue
+
+        print(f"Extraction contenu PDF: {pdf_path}")
+        content = {
+            "metadata": article,
+            "text": extract_text(pdf_path),
+            #"tables": extract_tables(pdf_path),
+            #"images": extract_images(pdf_path),  # image bytes, à gérer plus tard
+        }
+        dataset.append(content)
+
+    return dataset
+
+
+def save_dataset(dataset, filename):
+    dataset_filtered = []
+    for item in dataset:
+        filtered_item = item.copy()
+
+        # Convertir les DataFrames en listes de dictionnaires
+        filtered_item["tables"] = []
+        for table in item.get("tables", []):
+            # Si table est un DataFrame
+            if hasattr(table, "to_dict"):
+                filtered_item["tables"].append(table.to_dict(orient="records"))
+            else:
+                filtered_item["tables"].append(table)
+
+        # Gérer les images (bytes en string base64)
+        filtered_images = []
+        for img in item.get("images", []):
+            if isinstance(img, dict):
+                import base64
+                # Encoder les bytes en base64 pour JSON
+                encoded_image = base64.b64encode(img.get("image_bytes", b"")).decode('utf-8')
+                filtered_images.append({
+                    "xref": img.get("xref", ""),
+                    "ext": img.get("ext", ""),
+                    "image_base64": encoded_image
+                })
+        filtered_item["images"] = filtered_images
+        dataset_filtered.append(filtered_item)
+
+    with open(filename, "w", encoding="utf-8") as f:
+        json.dump(dataset_filtered, f, ensure_ascii=False, indent=2)
+    print(f"Données extraites sauvegardées dans {filename}")
