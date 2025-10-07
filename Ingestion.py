@@ -147,3 +147,16 @@ def save_dataset(dataset, filename):
     with open(filename, "w", encoding="utf-8") as f:
         json.dump(dataset_filtered, f, ensure_ascii=False, indent=2)
     print(f"Données extraites sauvegardées dans {filename}")
+
+
+if __name__ == "__main__":
+    TOPIC = "machine learning"
+    BASE_DOWNLOAD_DIR = "arxiv_papers"
+    MAX_RESULTS = 10
+    pdf_ingestion(BASE_DOWNLOAD_DIR,TOPIC,MAX_RESULTS) 
+    metadata_path = os.path.join(BASE_DOWNLOAD_DIR, "metadata.json")
+    with open(metadata_path, 'r', encoding='utf-8') as f:
+        articles = json.load(f)
+
+    full_dataset = extract_all_content(articles, BASE_DOWNLOAD_DIR)
+    save_dataset(full_dataset, os.path.join(BASE_DOWNLOAD_DIR, "extracted_content.json"))

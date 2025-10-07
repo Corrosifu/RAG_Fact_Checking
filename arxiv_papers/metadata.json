@@ -1,143 +1,139 @@
 [
   {
-    "id": "2510.03231v1",
-    "title": "Reward Models are Metrics in a Trench Coat",
+    "id": "2510.05102v1",
+    "title": "TopInG: Topologically Interpretable Graph Learning via Persistent\n  Rationale Filtration",
     "authors": [
-      "Sebastian Gehrmann"
+      "Cheng Xin",
+      "Fan Xu",
+      "Xin Ding",
+      "Jie Gao",
+      "Jiaxin Ding"
     ],
-    "summary": "The emergence of reinforcement learning in post-training of large language\nmodels has sparked significant interest in reward models. Reward models assess\nthe quality of sampled model outputs to generate training signals. This task is\nalso performed by evaluation metrics that monitor the performance of an AI\nmodel. We find that the two research areas are mostly separate, leading to\nredundant terminology and repeated pitfalls. Common challenges include\nsusceptibility to spurious correlations, impact on downstream reward hacking,\nmethods to improve data quality, and approaches to meta-evaluation. Our\nposition paper argues that a closer collaboration between the fields can help\novercome these issues. To that end, we show how metrics outperform reward\nmodels on specific tasks and provide an extensive survey of the two areas.\nGrounded in this survey, we point to multiple research topics in which closer\nalignment can improve reward models and metrics in areas such as preference\nelicitation methods, avoidance of spurious correlations and reward hacking, and\ncalibration-aware meta-evaluation.",
-    "published": "2025-10-03T17:59:44Z",
-    "pdf_url": "http://arxiv.org/pdf/2510.03231v1"
+    "summary": "Graph Neural Networks (GNNs) have shown remarkable success across various\nscientific fields, yet their adoption in critical decision-making is often\nhindered by a lack of interpretability. Recently, intrinsically interpretable\nGNNs have been studied to provide insights into model predictions by\nidentifying rationale substructures in graphs. However, existing methods face\nchallenges when the underlying rationale subgraphs are complex and varied. In\nthis work, we propose TopInG: Topologically Interpretable Graph Learning, a\nnovel topological framework that leverages persistent homology to identify\npersistent rationale subgraphs. TopInG employs a rationale filtration learning\napproach to model an autoregressive generation process of rationale subgraphs,\nand introduces a self-adjusted topological constraint, termed topological\ndiscrepancy, to enforce a persistent topological distinction between rationale\nsubgraphs and irrelevant counterparts. We provide theoretical guarantees that\nour loss function is uniquely optimized by the ground truth under specific\nconditions. Extensive experiments demonstrate TopInG's effectiveness in\ntackling key challenges, such as handling variform rationale subgraphs,\nbalancing predictive performance with interpretability, and mitigating spurious\ncorrelations. Results show that our approach improves upon state-of-the-art\nmethods on both predictive accuracy and interpretation quality.",
+    "published": "2025-10-06T17:59:44Z",
+    "pdf_url": "http://arxiv.org/pdf/2510.05102v1"
   },
   {
-    "id": "2510.03230v1",
-    "title": "Improving GUI Grounding with Explicit Position-to-Coordinate Mapping",
+    "id": "2510.05097v1",
+    "title": "Pulp Motion: Framing-aware multimodal camera and human motion generation",
     "authors": [
-      "Suyuchen Wang",
-      "Tianyu Zhang",
-      "Ahmed Masry",
-      "Christopher Pal",
-      "Spandana Gella",
-      "Bang Liu",
-      "Perouz Taslakian"
+      "Robin Courant",
+      "Xi Wang",
+      "David Loiseaux",
+      "Marc Christie",
+      "Vicky Kalogeiton"
     ],
-    "summary": "GUI grounding, the task of mapping natural-language instructions to pixel\ncoordinates, is crucial for autonomous agents, yet remains difficult for\ncurrent VLMs. The core bottleneck is reliable patch-to-pixel mapping, which\nbreaks when extrapolating to high-resolution displays unseen during training.\nCurrent approaches generate coordinates as text tokens directly from visual\nfeatures, forcing the model to infer complex position-to-pixel mappings\nimplicitly; as a result, accuracy degrades and failures proliferate on new\nresolutions. We address this with two complementary innovations. First, RULER\ntokens serve as explicit coordinate markers, letting the model reference\npositions similar to gridlines on a map and adjust rather than generate\ncoordinates from scratch. Second, Interleaved MRoPE (I-MRoPE) improves spatial\nencoding by ensuring that width and height dimensions are represented equally,\naddressing the asymmetry of standard positional schemes. Experiments on\nScreenSpot, ScreenSpot-V2, and ScreenSpot-Pro show consistent gains in\ngrounding accuracy, with the largest improvements on high-resolution\ninterfaces. By providing explicit spatial guidance rather than relying on\nimplicit learning, our approach enables more reliable GUI automation across\ndiverse resolutions and platforms.",
-    "published": "2025-10-03T17:59:34Z",
-    "pdf_url": "http://arxiv.org/pdf/2510.03230v1"
+    "summary": "Treating human motion and camera trajectory generation separately overlooks a\ncore principle of cinematography: the tight interplay between actor performance\nand camera work in the screen space. In this paper, we are the first to cast\nthis task as a text-conditioned joint generation, aiming to maintain consistent\non-screen framing while producing two heterogeneous, yet intrinsically linked,\nmodalities: human motion and camera trajectories. We propose a simple,\nmodel-agnostic framework that enforces multimodal coherence via an auxiliary\nmodality: the on-screen framing induced by projecting human joints onto the\ncamera. This on-screen framing provides a natural and effective bridge between\nmodalities, promoting consistency and leading to more precise joint\ndistribution. We first design a joint autoencoder that learns a shared latent\nspace, together with a lightweight linear transform from the human and camera\nlatents to a framing latent. We then introduce auxiliary sampling, which\nexploits this linear transform to steer generation toward a coherent framing\nmodality. To support this task, we also introduce the PulpMotion dataset, a\nhuman-motion and camera-trajectory dataset with rich captions, and high-quality\nhuman motions. Extensive experiments across DiT- and MAR-based architectures\nshow the generality and effectiveness of our method in generating on-frame\ncoherent human-camera motions, while also achieving gains on textual alignment\nfor both modalities. Our qualitative results yield more cinematographically\nmeaningful framings setting the new state of the art for this task. Code,\nmodels and data are available in our\n\\href{https://www.lix.polytechnique.fr/vista/projects/2025_pulpmotion_courant/}{project\npage}.",
+    "published": "2025-10-06T17:58:34Z",
+    "pdf_url": "http://arxiv.org/pdf/2510.05097v1"
   },
   {
-    "id": "2510.03228v1",
-    "title": "MIXER: Mixed Hyperspherical Random Embedding Neural Network for Texture\n  Recognition",
+    "id": "2510.05095v1",
+    "title": "From Noisy Traces to Stable Gradients: Bias-Variance Optimized\n  Preference Optimization for Aligning Large Reasoning Models",
     "authors": [
-      "Ricardo T. Fares",
-      "Lucas C. Ribas"
+      "Mingkang Zhu",
+      "Xi Chen",
+      "Bei Yu",
+      "Hengshuang Zhao",
+      "Jiaya Jia"
     ],
-    "summary": "Randomized neural networks for representation learning have consistently\nachieved prominent results in texture recognition tasks, effectively combining\nthe advantages of both traditional techniques and learning-based approaches.\nHowever, existing approaches have so far focused mainly on improving\ncross-information prediction, without introducing significant advancements to\nthe overall randomized network architecture. In this paper, we propose Mixer, a\nnovel randomized neural network for texture representation learning. At its\ncore, the method leverages hyperspherical random embeddings coupled with a\ndual-branch learning module to capture both intra- and inter-channel\nrelationships, further enhanced by a newly formulated optimization problem for\nbuilding rich texture representations. Experimental results have shown the\ninteresting results of the proposed approach across several pure texture\nbenchmarks, each with distinct characteristics and challenges. The source code\nwill be available upon publication.",
-    "published": "2025-10-03T17:58:04Z",
-    "pdf_url": "http://arxiv.org/pdf/2510.03228v1"
+    "summary": "Large reasoning models (LRMs) generate intermediate reasoning traces before\nproducing final answers, yielding strong gains on multi-step and mathematical\ntasks. Yet aligning LRMs with human preferences, a crucial prerequisite for\nmodel deployment, remains underexplored. The statistically correct objective\nfor preference alignment requires marginalizing over reasoning traces, but this\ncomputation is intractable in practice. A common workaround optimizes a single\nsampled trajectory, which introduces substantial gradient variance from\nstochastic trace sampling. To address this challenge, we frame preference\noptimization for LRMs through the lens of the bias--variance trade-off and\npropose Bias--Variance Optimized Preference Optimization (BVPO), a simple,\ndrop-in method that mixes two gradient estimators: a high-variance trace-based\nestimator and a low-variance empty-trace estimator obtained by disabling\nreasoning trace generation. Our theory shows that BVPO strictly reduces\ntrace-induced variance for any nontrivial mixture, provides a closed-form\nchoice of the mixing weight that minimizes mean-squared error relative to the\ntrue marginal gradient, and under standard smoothness and step-size conditions,\ntightens classical convergence bounds for stochastic gradient descent.\nEmpirically, BVPO improves alignment over the best baseline by up to 7.8 points\non AlpacaEval~2 and 6.8 points on Arena-Hard. Despite being trained only on\ngeneral conversational data, BVPO also boosts reasoning performance for base\nmodels by up to 4.0 points on the average of six math reasoning benchmarks.\nThese results identify variance from trace sampling as a key bottleneck and\ndemonstrate that directly optimizing the bias--variance trade-off yields more\nstable training and stronger overall performance.",
+    "published": "2025-10-06T17:58:01Z",
+    "pdf_url": "http://arxiv.org/pdf/2510.05095v1"
   },
   {
-    "id": "2510.03226v1",
-    "title": "A fast non-reversible sampler for Bayesian finite mixture models",
+    "id": "2510.05093v1",
+    "title": "Character Mixing for Video Generation",
     "authors": [
-      "Filippo Ascolani",
-      "Giacomo Zanella"
+      "Tingting Liao",
+      "Chongjian Ge",
+      "Guangyi Liu",
+      "Hao Li",
+      "Yi Zhou"
     ],
-    "summary": "Finite mixtures are a cornerstone of Bayesian modelling, and it is well-known\nthat sampling from the resulting posterior distribution can be a hard task. In\nparticular, popular reversible Markov chain Monte Carlo schemes are often slow\nto converge when the number of observations $n$ is large. In this paper we\nintroduce a novel and simple non-reversible sampling scheme for Bayesian finite\nmixture models, which is shown to drastically outperform classical samplers in\nmany scenarios of interest, especially during convergence phase and when\ncomponents in the mixture have non-negligible overlap. At the theoretical\nlevel, we show that the performance of the proposed non-reversible scheme\ncannot be worse than the standard one, in terms of asymptotic variance, by more\nthan a factor of four; and we provide a scaling limit analysis suggesting that\nthe non-reversible sampler can reduce the convergence time from O$(n^2)$ to\nO$(n)$. We also discuss why the statistical features of mixture models make\nthem an ideal case for the use of non-reversible discrete samplers.",
-    "published": "2025-10-03T17:57:44Z",
-    "pdf_url": "http://arxiv.org/pdf/2510.03226v1"
+    "summary": "Imagine Mr. Bean stepping into Tom and Jerry--can we generate videos where\ncharacters interact naturally across different worlds? We study inter-character\ninteraction in text-to-video generation, where the key challenge is to preserve\neach character's identity and behaviors while enabling coherent cross-context\ninteraction. This is difficult because characters may never have coexisted and\nbecause mixing styles often causes style delusion, where realistic characters\nappear cartoonish or vice versa. We introduce a framework that tackles these\nissues with Cross-Character Embedding (CCE), which learns identity and\nbehavioral logic across multimodal sources, and Cross-Character Augmentation\n(CCA), which enriches training with synthetic co-existence and mixed-style\ndata. Together, these techniques allow natural interactions between previously\nuncoexistent characters without losing stylistic fidelity. Experiments on a\ncurated benchmark of cartoons and live-action series with 10 characters show\nclear improvements in identity preservation, interaction quality, and\nrobustness to style delusion, enabling new forms of generative\nstorytelling.Additional results and videos are available on our project page:\nhttps://tingtingliao.github.io/mimix/.",
+    "published": "2025-10-06T17:57:39Z",
+    "pdf_url": "http://arxiv.org/pdf/2510.05093v1"
   },
   {
-    "id": "2510.03224v1",
-    "title": "Test-Time Defense Against Adversarial Attacks via Stochastic Resonance\n  of Latent Ensembles",
+    "id": "2510.05092v1",
+    "title": "Learning to Interpret Weight Differences in Language Models",
     "authors": [
-      "Dong Lao",
-      "Yuxiang Zhang",
-      "Haniyeh Ehsani Oskouie",
-      "Yangchao Wu",
-      "Alex Wong",
-      "Stefano Soatto"
+      "Avichal Goel",
+      "Yoon Kim",
+      "Nir Shavit",
+      "Tony T. Wang"
     ],
-    "summary": "We propose a test-time defense mechanism against adversarial attacks:\nimperceptible image perturbations that significantly alter the predictions of a\nmodel. Unlike existing methods that rely on feature filtering or smoothing,\nwhich can lead to information loss, we propose to \"combat noise with noise\" by\nleveraging stochastic resonance to enhance robustness while minimizing\ninformation loss. Our approach introduces small translational perturbations to\nthe input image, aligns the transformed feature embeddings, and aggregates them\nbefore mapping back to the original reference image. This can be expressed in a\nclosed-form formula, which can be deployed on diverse existing network\narchitectures without introducing additional network modules or fine-tuning for\nspecific attack types. The resulting method is entirely training-free,\narchitecture-agnostic, and attack-agnostic. Empirical results show\nstate-of-the-art robustness on image classification and, for the first time,\nestablish a generic test-time defense for dense prediction tasks, including\nstereo matching and optical flow, highlighting the method's versatility and\npracticality. Specifically, relative to clean (unperturbed) performance, our\nmethod recovers up to 68.1% of the accuracy loss on image classification, 71.9%\non stereo matching, and 29.2% on optical flow under various types of\nadversarial attacks.",
-    "published": "2025-10-03T17:57:25Z",
-    "pdf_url": "http://arxiv.org/pdf/2510.03224v1"
+    "summary": "Finetuning (pretrained) language models is a standard approach for updating\ntheir internal parametric knowledge and specializing them to new tasks and\ndomains. However, the corresponding model weight changes (\"weight diffs\") are\nnot generally interpretable. While inspecting the finetuning dataset can give a\nsense of how the model might have changed, these datasets are often not\npublicly available or are too large to work with directly. Towards the goal of\ncomprehensively understanding weight diffs in natural language, we introduce\nDiff Interpretation Tuning (DIT), a method that trains models to describe their\nown finetuning-induced modifications. Our approach uses synthetic, labeled\nweight diffs to train a DIT adapter, which can be applied to a compatible\nfinetuned model to make it describe how it has changed. We demonstrate in two\nproof-of-concept settings (reporting hidden behaviors and summarizing finetuned\nknowledge) that our method enables models to describe their finetuning-induced\nmodifications using accurate natural language descriptions.",
+    "published": "2025-10-06T17:57:23Z",
+    "pdf_url": "http://arxiv.org/pdf/2510.05092v1"
   },
   {
-    "id": "2510.03223v1",
-    "title": "Self-Anchor: Large Language Model Reasoning via Step-by-step Attention\n  Alignment",
+    "id": "2510.05089v1",
+    "title": "QuantumBoost: A lazy, yet fast, quantum algorithm for learning with weak\n  hypotheses",
     "authors": [
-      "Hongxiang Zhang",
-      "Yuan Tian",
-      "Tianyi Zhang"
+      "Amira Abbas",
+      "Yanlin Chen",
+      "Tuyen Nguyen",
+      "Ronald de Wolf"
     ],
-    "summary": "To solve complex reasoning tasks for Large Language Models (LLMs),\nprompting-based methods offer a lightweight alternative to fine-tuning and\nreinforcement learning. However, as reasoning chains extend, critical\nintermediate steps and the original prompt will be buried in the context,\nreceiving insufficient attention and leading to errors. In this paper, we\npropose Self-Anchor, a novel pipeline that leverages the inherent structure of\nreasoning to steer LLM attention. Self-Anchor decomposes reasoning trajectories\ninto structured plans and automatically aligns the model's attention to the\nmost relevant inference steps, allowing the model to maintain focus throughout\ngeneration. Our experiment shows that Self-Anchor outperforms SOTA prompting\nmethods across six benchmarks. Notably, Self-Anchor significantly reduces the\nperformance gap between ``non-reasoning'' models and specialized reasoning\nmodels, with the potential to enable most LLMs to tackle complex reasoning\ntasks without retraining.",
-    "published": "2025-10-03T17:56:33Z",
-    "pdf_url": "http://arxiv.org/pdf/2510.03223v1"
+    "summary": "The technique of combining multiple votes to enhance the quality of a\ndecision is the core of boosting algorithms in machine learning. In particular,\nboosting provably increases decision quality by combining multiple weak\nlearners-hypotheses that are only slightly better than random guessing-into a\nsingle strong learner that classifies data well. There exist various versions\nof boosting algorithms, which we improve upon through the introduction of\nQuantumBoost. Inspired by classical work by Barak, Hardt and Kale, our\nQuantumBoost algorithm achieves the best known runtime over other boosting\nmethods through two innovations. First, it uses a quantum algorithm to compute\napproximate Bregman projections faster. Second, it combines this with a lazy\nprojection strategy, a technique from convex optimization where projections are\nperformed infrequently rather than every iteration. To our knowledge,\nQuantumBoost is the first algorithm, classical or quantum, to successfully\nadopt a lazy projection strategy in the context of boosting.",
+    "published": "2025-10-06T17:56:05Z",
+    "pdf_url": "http://arxiv.org/pdf/2510.05089v1"
   },
   {
-    "id": "2510.03222v1",
-    "title": "Low-probability Tokens Sustain Exploration in Reinforcement Learning\n  with Verifiable Reward",
+    "id": "2510.05087v1",
+    "title": "TeachLM: Post-Training LLMs for Education Using Authentic Learning Data",
     "authors": [
-      "Guanhua Huang",
-      "Tingqiang Xu",
-      "Mingze Wang",
-      "Qi Yi",
-      "Xue Gong",
-      "Siheng Li",
-      "Ruibin Xiong",
-      "Kejiao Li",
-      "Yuhao Jiang",
-      "Bo Zhou"
+      "Janos Perczel",
+      "Jin Chow",
+      "Dorottya Demszky"
     ],
-    "summary": "Reinforcement Learning with Verifiable Rewards (RLVR) has propelled Large\nLanguage Models in complex reasoning, yet its scalability is often hindered by\na training bottleneck where performance plateaus as policy entropy collapses,\nsignaling a loss of exploration. Previous methods typically address this by\nmaintaining high policy entropy, yet the precise mechanisms that govern\nmeaningful exploration have remained underexplored. Our analysis suggests that\nan unselective focus on entropy risks amplifying irrelevant tokens and\ndestabilizing training. This paper investigates the exploration dynamics within\nRLVR and identifies a key issue: the gradual elimination of valuable\nlow-probability exploratory tokens, which we term \\textbf{\\textit{reasoning\nsparks}}. We find that while abundant in pre-trained models, these sparks are\nsystematically extinguished during RLVR due to over-penalization, leading to a\ndegeneracy in exploration. To address this, we introduce Low-probability\nRegularization (Lp-Reg). Its core mechanism regularizes the policy towards a\nheuristic proxy distribution. This proxy is constructed by filtering out\npresumed noise tokens and re-normalizing the distribution over the remaining\ncandidates. The result is a less-noisy proxy where the probability of\n\\textit{reasoning sparks} is amplified, which then serves as a soft\nregularization target to shield these valuable tokens from elimination via KL\ndivergence. Experiments show that Lp-Reg enables stable on-policy training for\naround 1,000 steps, a regime where baseline entropy-control methods collapse.\nThis sustained exploration leads to state-of-the-art performance, achieving a\n$60.17\\%$ average accuracy on five math benchmarks, an improvement of $2.66\\%$\nover prior methods. Code is available at https://github.com/CarlanLark/Lp-Reg.",
-    "published": "2025-10-03T17:56:13Z",
-    "pdf_url": "http://arxiv.org/pdf/2510.03222v1"
+    "summary": "The promise of generative AI to revolutionize education is constrained by the\npedagogical limits of large language models (LLMs). A major issue is the lack\nof access to high-quality training data that reflect the learning of actual\nstudents. Prompt engineering has emerged as a stopgap, but the ability of\nprompts to encode complex pedagogical strategies in rule-based natural language\nis inherently limited. To address this gap we introduce TeachLM - an LLM\noptimized for teaching through parameter-efficient fine-tuning of\nstate-of-the-art models. TeachLM is trained on a dataset comprised of 100,000\nhours of one-on-one, longitudinal student-tutor interactions maintained by\nPolygence, which underwent a rigorous anonymization process to protect privacy.\nWe use parameter-efficient fine-tuning to develop an authentic student model\nthat enables the generation of high-fidelity synthetic student-tutor dialogues.\nBuilding on this capability, we propose a novel multi-turn evaluation protocol\nthat leverages synthetic dialogue generation to provide fast, scalable, and\nreproducible assessments of the dialogical capabilities of LLMs. Our\nevaluations demonstrate that fine-tuning on authentic learning data\nsignificantly improves conversational and pedagogical performance - doubling\nstudent talk time, improving questioning style, increasing dialogue turns by\n50%, and greater personalization of instruction.",
+    "published": "2025-10-06T17:55:04Z",
+    "pdf_url": "http://arxiv.org/pdf/2510.05087v1"
   },
   {
-    "id": "2510.03217v1",
-    "title": "Abstain and Validate: A Dual-LLM Policy for Reducing Noise in Agentic\n  Program Repair",
+    "id": "2510.05083v1",
+    "title": "Robust multicellular programs dissect the complex tumor microenvironment\n  and track disease progression in colorectal adenocarcinomas",
     "authors": [
-      "José Cambronero",
-      "Michele Tufano",
-      "Sherry Shi",
-      "Renyao Wei",
-      "Grant Uy",
-      "Runxiang Cheng",
-      "Chin-Jung Liu",
-      "Shiying Pan",
-      "Satish Chandra",
-      "Pat Rondon"
+      "Loan Vulliard",
+      "Teresa Glauner",
+      "Sven Truxa",
+      "Miray Cetin",
+      "Yu-Le Wu",
+      "Ronald Simon",
+      "Laura Behm",
+      "Jovan Tanevski",
+      "Julio Saez-Rodriguez",
+      "Guido Sauter",
+      "Felix J. Hartmann"
     ],
-    "summary": "Agentic Automated Program Repair (APR) is increasingly tackling complex,\nrepository-level bugs in industry, but ultimately agent-generated patches still\nneed to be reviewed by a human before committing them to ensure they address\nthe bug. Showing unlikely patches to developers can lead to substantial noise,\nwasting valuable developer time and eroding trust in automated code changes. We\nintroduce two complementary LLM-based policies to reduce such noise: bug\nabstention and patch validation policies. Bug abstention excludes bugs that the\nagentic APR system is unlikely to fix. Patch validation rejects patches that\nare unlikely to be a good fix for the given bug. We evaluate both policies on\nthree sets of bugs from Google's codebase, and their candidate patches\ngenerated by an internal agentic APR system. On a set of 174 human-reported\nbugs, removing bugs and patch trajectories rejected by our policies can raise\nsuccess rates by up to 13 percentage points and 15 percentage points,\nrespectively, and by up to 39 percentage points in combination. On null pointer\nexceptions and sanitizer-reported bugs with machine-generated bug reports,\npatch validation also improves average single-sample success rates. This\ntwo-policy approach provides a practical path to the reliable, industrial-scale\ndeployment of agentic APR systems.",
-    "published": "2025-10-03T17:53:28Z",
-    "pdf_url": "http://arxiv.org/pdf/2510.03217v1"
+    "summary": "Colorectal cancer (CRC) is highly heterogeneous, with five-year survival\nrates dropping from $\\sim$90% in localized disease to $\\sim$15% with distant\nmetastases. Disease progression is shaped not only by tumor-intrinsic\nalterations but also by the reorganization of the tumor microenvironment (TME).\nMetabolic, compositional, and spatial changes contribute to this progression,\nbut considered individually they lack context and often fail as therapeutic\ntargets. Understanding their coordination could reveal processes to alter the\ndisease course. Here, we combined multiplexed ion beam imaging (MIBI) with\nmachine learning to profile metabolic, functional and spatial states of 522\ncolorectal lesions with single-cell resolution. We observed recurrent\nstage-specific remodeling marked by a lymphoid-to-myeloid shift, stromal-cancer\ncooperation, and malignant metabolic shifts. Spatial organization of\nepithelial, stromal, and immune compartments provided stronger stratification\nof disease stage than tumor-intrinsic changes or bulk immune infiltration\nalone. To systematically model these coordinated changes, we condensed\nmultimodal features into 10 latent factors of TME organization. These factors\ntracked disease progression, were conserved across cohorts, and revealed\nfrequent multicellular metabolic niches and distinct, non-exclusive TME\ntrajectories. Our framework MuVIcell exposes the elements that together drive\nCRC progression by grouping co-occurring changes across cell types and feature\nclasses into coordinated multicellular programs. This creates a rational basis\nto therapeutically target TME reorganization. Importantly, the framework is\nscalable and flexible, offering a resource for studying multicellular\norganization in other solid tumors.",
+    "published": "2025-10-06T17:51:26Z",
+    "pdf_url": "http://arxiv.org/pdf/2510.05083v1"
   },
   {
-    "id": "2510.03215v1",
-    "title": "Cache-to-Cache: Direct Semantic Communication Between Large Language\n  Models",
+    "id": "2510.05080v1",
+    "title": "MICROTRIPS: MICRO-geography TRavel Intelligence and Pattern Synthesis",
     "authors": [
-      "Tianyu Fu",
-      "Zihan Min",
-      "Hanling Zhang",
-      "Jichao Yan",
-      "Guohao Dai",
-      "Wanli Ouyang",
-      "Yu Wang"
+      "Yangyang Wang",
+      "Tayo Fabusuyi"
     ],
-    "summary": "Multi-LLM systems harness the complementary strengths of diverse Large\nLanguage Models, achieving performance and efficiency gains unattainable by a\nsingle model. In existing designs, LLMs communicate through text, forcing\ninternal representations to be transformed into output token sequences. This\nprocess both loses rich semantic information and incurs token-by-token\ngeneration latency. Motivated by these limitations, we ask: Can LLMs\ncommunicate beyond text? Oracle experiments show that enriching the KV-Cache\nsemantics can improve response quality without increasing cache size,\nsupporting KV-Cache as an effective medium for inter-model communication. Thus,\nwe propose Cache-to-Cache (C2C), a new paradigm for direct semantic\ncommunication between LLMs. C2C uses a neural network to project and fuse the\nsource model's KV-cache with that of the target model to enable direct semantic\ntransfer. A learnable gating mechanism selects the target layers that benefit\nfrom cache communication. Compared with text communication, C2C utilizes the\ndeep, specialized semantics from both models, while avoiding explicit\nintermediate text generation. Experiments show that C2C achieves 8.5-10.5%\nhigher average accuracy than individual models. It further outperforms the text\ncommunication paradigm by approximately 3.0-5.0%, while delivering an average\n2.0x speedup in latency. Our code is available at\nhttps://github.com/thu-nics/C2C.",
-    "published": "2025-10-03T17:52:32Z",
-    "pdf_url": "http://arxiv.org/pdf/2510.03215v1"
+    "summary": "This study presents a novel small-area estimation framework to enhance urban\ntransportation planning through detailed characterization of travel behavior.\nOur approach improves on the four-step travel model by employing publicly\navailable microdata files and machine learning methods to predict travel\nbehavior for a representative, synthetic population at small geographic areas.\nThis approach enables high-resolution estimation of trip generation, trip\ndistribution, mode choice, and route assignment. Validation using ACS/PUMS\nwork-commute datasets demonstrates that our framework achieves higher accuracy\ncompared to conventional approaches. The resulting granular insights enable the\ntailoring of interventions to address localized situations and support a range\nof policy applications and targeted interventions, including the optimal\nplacement of micro-fulfillment centers, effective curb-space management, and\nthe design of more inclusive transportation solutions particularly for\nvulnerable communities.",
+    "published": "2025-10-06T17:50:56Z",
+    "pdf_url": "http://arxiv.org/pdf/2510.05080v1"
   },
   {
-    "id": "2510.03209v1",
-    "title": "Joint Bidding on Intraday and Frequency Containment Reserve Markets",
+    "id": "2510.05071v1",
+    "title": "Neuroplastic Modular Framework: Cross-Domain Image Classification of\n  Garbage and Industrial Surfaces",
     "authors": [
-      "Yiming Zhang",
-      "Wolfgang Ridinger",
-      "David Wozabal"
+      "Debojyoti Ghosh",
+      "Soumya K Ghosh",
+      "Adrijit Goswami"
     ],
-    "summary": "As renewable energy integration increases supply variability, battery energy\nstorage systems (BESS) present a viable solution for balancing supply and\ndemand. This paper proposes a novel approach for optimizing battery BESS\nparticipation in multiple electricity markets. We develop a joint bidding\nstrategy that combines participation in the primary frequency reserve market\nwith continuous trading in the intraday market, addressing a gap in the extant\nliterature which typically considers these markets in isolation or simplifies\nthe continuous nature of intraday trading. Our approach utilizes a mixed\ninteger linear programming implementation of the rolling intrinsic algorithm\nfor intraday decisions and state of charge recovery, alongside a learned\nclassifier strategy (LCS) that determines optimal capacity allocation between\nmarkets. A comprehensive out-of-sample backtest over more than one year of\nhistorical German market data validates our approach: The LCS increases overall\nprofits by over 4% compared to the best-performing static strategy and by more\nthan 3% over a naive dynamic benchmark. Crucially, our method closes the gap to\na theoretical perfect foresight strategy to just 4%, demonstrating the\neffectiveness of dynamic, learning-based allocation in a complex, multi-market\nenvironment.",
-    "published": "2025-10-03T17:48:21Z",
-    "pdf_url": "http://arxiv.org/pdf/2510.03209v1"
+    "summary": "Efficient and accurate classification of waste and industrial surface defects\nis essential for ensuring sustainable waste management and maintaining high\nstandards in quality control. This paper introduces the Neuroplastic Modular\nClassifier, a novel hybrid architecture designed for robust and adaptive image\nclassification in dynamic environments. The model combines a ResNet-50 backbone\nfor localized feature extraction with a Vision Transformer (ViT) to capture\nglobal semantic context. Additionally, FAISS-based similarity retrieval is\nincorporated to provide a memory-like reference to previously encountered data,\nenriching the model's feature space. A key innovation of our architecture is\nthe neuroplastic modular design composed of expandable, learnable blocks that\ndynamically grow during training when performance plateaus. Inspired by\nbiological learning systems, this mechanism allows the model to adapt to data\ncomplexity over time, improving generalization. Beyond garbage classification,\nwe validate the model on the Kolektor Surface Defect Dataset 2 (KolektorSDD2),\nwhich involves industrial defect detection on metal surfaces. Experimental\nresults across domains show that the proposed architecture outperforms\ntraditional static models in both accuracy and adaptability. The Neuroplastic\nModular Classifier offers a scalable, high-performance solution for real-world\nimage classification, with strong applicability in both environmental and\nindustrial domains.",
+    "published": "2025-10-06T17:47:45Z",
+    "pdf_url": "http://arxiv.org/pdf/2510.05071v1"
   }
 ]
