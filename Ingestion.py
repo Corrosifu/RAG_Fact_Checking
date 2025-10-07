@@ -4,8 +4,8 @@ import feedparser
 import json
 import pdfplumber
 import camelot.io as camelot
-import fitz
-
+#import fitz
+import pymupdf4llm
 ARXIV_API_URL = "http://export.arxiv.org/api/query"
 
 def fetch_arxiv_metadata(query, max_results=100):
@@ -58,12 +58,14 @@ def pdf_ingestion(BASE_DOWNLOAD_DIR,TOPIC,MAX_RESULTS):
 
 def extract_text(pdf_path):
     all_text = ""
+    
     with pdfplumber.open(pdf_path) as pdf:
         for page in pdf.pages:
             all_text += page.extract_text() + "\n"
     return all_text
 
-
+def extract_md(pdf_path):
+    return pymupdf4llm.to_markdown(pdf_path)
 
 """def extract_tables(pdf_path):
     tables = camelot.read_pdf(pdf_path, pages='all')
@@ -104,7 +106,7 @@ def extract_all_content(articles, base_dir):
         print(f"Extraction contenu PDF: {pdf_path}")
         content = {
             "metadata": article,
-            "text": extract_text(pdf_path),
+            "text": extract_md(pdf_path),
             #"tables": extract_tables(pdf_path),
             #"images": extract_images(pdf_path),  # image bytes, à gérer plus tard
         }
@@ -119,7 +121,7 @@ def save_dataset(dataset, filename):
         filtered_item = item.copy()
 
         # Convertir les DataFrames en listes de dictionnaires
-        filtered_item["tables"] = []
+        """filtered_item["tables"] = []
         for table in item.get("tables", []):
             # Si table est un DataFrame
             if hasattr(table, "to_dict"):
@@ -139,7 +141,7 @@ def save_dataset(dataset, filename):
                     "ext": img.get("ext", ""),
                     "image_base64": encoded_image
                 })
-        filtered_item["images"] = filtered_images
+        filtered_item["images"] = filtered_images"""
         dataset_filtered.append(filtered_item)
 
     with open(filename, "w", encoding="utf-8") as f:
