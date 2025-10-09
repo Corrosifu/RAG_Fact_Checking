@@ -14,12 +14,13 @@ def embed_vectorstore(chunked_dataset):
     embedder = HuggingFaceEmbeddings(
     model_name="Qwen/Qwen3-Embedding-0.6B",
     model_kwargs={"device": "cuda" if torch.cuda.is_available() else "cpu"},
-    encode_kwargs={"normalize_embeddings": True,"batch_size":2}  
+    encode_kwargs={"normalize_embeddings": True,"batch_size":1}  
     )
+
     texts = [chunk["text"] for chunk in chunked_dataset]
     metadatas = [chunk["metadata"] for chunk in chunked_dataset]
     embeddings=[]
-    batch_size = 2  
+    batch_size = 1  
     docs = [Document(page_content=txt, metadata=meta) for txt, meta in zip(texts, metadatas)]
     
 

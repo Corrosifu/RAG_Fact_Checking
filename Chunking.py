@@ -24,7 +24,7 @@ def chunk_articles_with_scibert(articles, chunk_size=1000, chunk_overlap=200):
     chunked_dataset = []
     for article in articles:
         metadata_str = f"{article['metadata']}" if 'metadata' in article else ""
-        full_text = metadata_str + "\n" + (article.get("text") or "")
+        full_text = (article.get("text") or "") #metadata_str + "\n" + (article.get("text") or "")
         chunks = chunk_text_with_scibert(full_text, chunk_size, chunk_overlap)
         chunked_dataset.extend(
             {
