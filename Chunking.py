@@ -1,25 +1,31 @@
-
 import json
-from langchain.text_splitter import MarkdownTextSplitter
-import spacy
+from transformers import AutoTokenizer
 
 
-nlp = spacy.load("en_core_web_sm") 
+tokenizer = AutoTokenizer.from_pretrained("allenai/scibert_scivocab_uncased")
 
 def load_articles(json_path):
     with open(json_path, "r", encoding="utf-8") as f:
-        articles = json.load(f)
-    return articles
+        return json.load(f)
 
+def chunk_text_with_scibert(text, chunk_size=1000, chunk_overlap=200):
+    tokens = tokenizer.encode(text, add_special_tokens=False)
+    chunks = []
+    start = 0
+    while start < len(tokens):
+        end = min(start + chunk_size, len(tokens))
+        chunk_tokens = tokens[start:end]
+        chunk_text = tokenizer.decode(chunk_tokens, clean_up_tokenization_spaces=True)
+        chunks.append(chunk_text)
+        start += chunk_size - chunk_overlap
+    return chunks
 
-
-def chunk_articles_markdown(articles, chunk_size=1000, chunk_overlap=200):
-    splitter = MarkdownTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
+def chunk_articles_with_scibert(articles, chunk_size=1000, chunk_overlap=200):
     chunked_dataset = []
     for article in articles:
         metadata_str = f"{article['metadata']}" if 'metadata' in article else ""
         full_text = metadata_str + "\n" + (article.get("text") or "")
-        chunks = splitter.split_text(full_text)
+        chunks = chunk_text_with_scibert(full_text, chunk_size, chunk_overlap)
         chunked_dataset.extend(
             {
                 "source_id": article.get("metadata", {}).get("source", ""),
@@ -38,5 +44,6 @@ def save_chunked_dataset(chunked_dataset, filename):
 if __name__ == "__main__":
     json_path = "arxiv_papers/extracted_content.json"
     articles = load_articles(json_path)
-    chunked_data = chunk_articles_markdown(articles)
-    save_chunked_dataset(chunked_data, "arxiv_papers/chunked_dataset.json")
+    chunked_data = chunk_articles_with_scibert(articles)
+    save_chunked_dataset(chunked_data, "arxiv_papers/chunked_dataset_scibert.json")
+
