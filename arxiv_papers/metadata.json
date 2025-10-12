@@ -1,139 +1,149 @@
 [
   {
-    "id": "2510.05102v1",
-    "title": "TopInG: Topologically Interpretable Graph Learning via Persistent\n  Rationale Filtration",
+    "id": "2510.08575v1",
+    "title": "ReSplat: Learning Recurrent Gaussian Splats",
     "authors": [
-      "Cheng Xin",
-      "Fan Xu",
-      "Xin Ding",
-      "Jie Gao",
-      "Jiaxin Ding"
+      "Haofei Xu",
+      "Daniel Barath",
+      "Andreas Geiger",
+      "Marc Pollefeys"
     ],
-    "summary": "Graph Neural Networks (GNNs) have shown remarkable success across various\nscientific fields, yet their adoption in critical decision-making is often\nhindered by a lack of interpretability. Recently, intrinsically interpretable\nGNNs have been studied to provide insights into model predictions by\nidentifying rationale substructures in graphs. However, existing methods face\nchallenges when the underlying rationale subgraphs are complex and varied. In\nthis work, we propose TopInG: Topologically Interpretable Graph Learning, a\nnovel topological framework that leverages persistent homology to identify\npersistent rationale subgraphs. TopInG employs a rationale filtration learning\napproach to model an autoregressive generation process of rationale subgraphs,\nand introduces a self-adjusted topological constraint, termed topological\ndiscrepancy, to enforce a persistent topological distinction between rationale\nsubgraphs and irrelevant counterparts. We provide theoretical guarantees that\nour loss function is uniquely optimized by the ground truth under specific\nconditions. Extensive experiments demonstrate TopInG's effectiveness in\ntackling key challenges, such as handling variform rationale subgraphs,\nbalancing predictive performance with interpretability, and mitigating spurious\ncorrelations. Results show that our approach improves upon state-of-the-art\nmethods on both predictive accuracy and interpretation quality.",
-    "published": "2025-10-06T17:59:44Z",
-    "pdf_url": "http://arxiv.org/pdf/2510.05102v1"
+    "summary": "While feed-forward Gaussian splatting models provide computational efficiency\nand effectively handle sparse input settings, their performance is\nfundamentally limited by the reliance on a single forward pass during\ninference. We propose ReSplat, a feed-forward recurrent Gaussian splatting\nmodel that iteratively refines 3D Gaussians without explicitly computing\ngradients. Our key insight is that the Gaussian splatting rendering error\nserves as a rich feedback signal, guiding the recurrent network to learn\neffective Gaussian updates. This feedback signal naturally adapts to unseen\ndata distributions at test time, enabling robust generalization. To initialize\nthe recurrent process, we introduce a compact reconstruction model that\noperates in a $16 \\times$ subsampled space, producing $16 \\times$ fewer\nGaussians than previous per-pixel Gaussian models. This substantially reduces\ncomputational overhead and allows for efficient Gaussian updates. Extensive\nexperiments across varying of input views (2, 8, 16), resolutions ($256 \\times\n256$ to $540 \\times 960$), and datasets (DL3DV and RealEstate10K) demonstrate\nthat our method achieves state-of-the-art performance while significantly\nreducing the number of Gaussians and improving the rendering speed. Our project\npage is at https://haofeixu.github.io/resplat/.",
+    "published": "2025-10-09T17:59:59Z",
+    "pdf_url": "http://arxiv.org/pdf/2510.08575v1"
   },
   {
-    "id": "2510.05097v1",
-    "title": "Pulp Motion: Framing-aware multimodal camera and human motion generation",
+    "id": "2510.08572v1",
+    "title": "BLAZER: Bootstrapping LLM-based Manipulation Agents with Zero-Shot Data\n  Generation",
     "authors": [
-      "Robin Courant",
-      "Xi Wang",
-      "David Loiseaux",
-      "Marc Christie",
-      "Vicky Kalogeiton"
+      "Rocktim Jyoti Das",
+      "Harsh Singh",
+      "Diana Turmakhan",
+      "Muhammad Abdullah Sohail",
+      "Mingfei Han",
+      "Preslav Nakov",
+      "Fabio Pizzati",
+      "Ivan Laptev"
     ],
-    "summary": "Treating human motion and camera trajectory generation separately overlooks a\ncore principle of cinematography: the tight interplay between actor performance\nand camera work in the screen space. In this paper, we are the first to cast\nthis task as a text-conditioned joint generation, aiming to maintain consistent\non-screen framing while producing two heterogeneous, yet intrinsically linked,\nmodalities: human motion and camera trajectories. We propose a simple,\nmodel-agnostic framework that enforces multimodal coherence via an auxiliary\nmodality: the on-screen framing induced by projecting human joints onto the\ncamera. This on-screen framing provides a natural and effective bridge between\nmodalities, promoting consistency and leading to more precise joint\ndistribution. We first design a joint autoencoder that learns a shared latent\nspace, together with a lightweight linear transform from the human and camera\nlatents to a framing latent. We then introduce auxiliary sampling, which\nexploits this linear transform to steer generation toward a coherent framing\nmodality. To support this task, we also introduce the PulpMotion dataset, a\nhuman-motion and camera-trajectory dataset with rich captions, and high-quality\nhuman motions. Extensive experiments across DiT- and MAR-based architectures\nshow the generality and effectiveness of our method in generating on-frame\ncoherent human-camera motions, while also achieving gains on textual alignment\nfor both modalities. Our qualitative results yield more cinematographically\nmeaningful framings setting the new state of the art for this task. Code,\nmodels and data are available in our\n\\href{https://www.lix.polytechnique.fr/vista/projects/2025_pulpmotion_courant/}{project\npage}.",
-    "published": "2025-10-06T17:58:34Z",
-    "pdf_url": "http://arxiv.org/pdf/2510.05097v1"
+    "summary": "Scaling data and models has played a pivotal role in the remarkable progress\nof computer vision and language. Inspired by these domains, recent efforts in\nrobotics have similarly focused on scaling both data and model size to develop\nmore generalizable and robust policies. However, unlike vision and language,\nrobotics lacks access to internet-scale demonstrations across diverse robotic\ntasks and environments. As a result, the scale of existing datasets typically\nsuffers from the need for manual data collection and curation. To address this\nproblem, here we propose BLAZER, a framework that learns manipulation policies\nfrom automatically generated training data. We build on the zero-shot\ncapabilities of LLM planners and automatically generate demonstrations for\ndiverse manipulation tasks in simulation. Successful examples are then used to\nfinetune an LLM and to improve its planning capabilities without human\nsupervision. Notably, while BLAZER training requires access to the simulator's\nstate, we demonstrate direct transfer of acquired skills to sensor-based\nmanipulation. Through extensive experiments, we show BLAZER to significantly\nimprove zero-shot manipulation in both simulated and real environments.\nMoreover, BLAZER improves on tasks outside of its training pool and enables\ndownscaling of LLM models. Our code and data will be made publicly available on\nthe project page.",
+    "published": "2025-10-09T17:59:58Z",
+    "pdf_url": "http://arxiv.org/pdf/2510.08572v1"
   },
   {
-    "id": "2510.05095v1",
-    "title": "From Noisy Traces to Stable Gradients: Bias-Variance Optimized\n  Preference Optimization for Aligning Large Reasoning Models",
+    "id": "2510.08573v1",
+    "title": "Reconstructing the local density field with combined convolutional and\n  point cloud architecture",
     "authors": [
-      "Mingkang Zhu",
-      "Xi Chen",
-      "Bei Yu",
-      "Hengshuang Zhao",
-      "Jiaya Jia"
+      "Baptiste Barthe-Gold",
+      "Nhat-Minh Nguyen",
+      "Leander Thiele"
     ],
-    "summary": "Large reasoning models (LRMs) generate intermediate reasoning traces before\nproducing final answers, yielding strong gains on multi-step and mathematical\ntasks. Yet aligning LRMs with human preferences, a crucial prerequisite for\nmodel deployment, remains underexplored. The statistically correct objective\nfor preference alignment requires marginalizing over reasoning traces, but this\ncomputation is intractable in practice. A common workaround optimizes a single\nsampled trajectory, which introduces substantial gradient variance from\nstochastic trace sampling. To address this challenge, we frame preference\noptimization for LRMs through the lens of the bias--variance trade-off and\npropose Bias--Variance Optimized Preference Optimization (BVPO), a simple,\ndrop-in method that mixes two gradient estimators: a high-variance trace-based\nestimator and a low-variance empty-trace estimator obtained by disabling\nreasoning trace generation. Our theory shows that BVPO strictly reduces\ntrace-induced variance for any nontrivial mixture, provides a closed-form\nchoice of the mixing weight that minimizes mean-squared error relative to the\ntrue marginal gradient, and under standard smoothness and step-size conditions,\ntightens classical convergence bounds for stochastic gradient descent.\nEmpirically, BVPO improves alignment over the best baseline by up to 7.8 points\non AlpacaEval~2 and 6.8 points on Arena-Hard. Despite being trained only on\ngeneral conversational data, BVPO also boosts reasoning performance for base\nmodels by up to 4.0 points on the average of six math reasoning benchmarks.\nThese results identify variance from trace sampling as a key bottleneck and\ndemonstrate that directly optimizing the bias--variance trade-off yields more\nstable training and stronger overall performance.",
-    "published": "2025-10-06T17:58:01Z",
-    "pdf_url": "http://arxiv.org/pdf/2510.05095v1"
+    "summary": "We construct a neural network to perform regression on the local dark-matter\ndensity field given line-of-sight peculiar velocities of dark-matter halos,\nbiased tracers of the dark matter field. Our architecture combines a\nconvolutional U-Net with a point-cloud DeepSets. This combination enables\nefficient use of small-scale information and improves reconstruction quality\nrelative to a U-Net-only approach. Specifically, our hybrid network recovers\nboth clustering amplitudes and phases better than the U-Net on small scales.",
+    "published": "2025-10-09T17:59:58Z",
+    "pdf_url": "http://arxiv.org/pdf/2510.08573v1"
   },
   {
-    "id": "2510.05093v1",
-    "title": "Character Mixing for Video Generation",
+    "id": "2510.08570v1",
+    "title": "Who Said Neural Networks Aren't Linear?",
     "authors": [
-      "Tingting Liao",
-      "Chongjian Ge",
-      "Guangyi Liu",
-      "Hao Li",
-      "Yi Zhou"
+      "Nimrod Berman",
+      "Assaf Hallak",
+      "Assaf Shocher"
     ],
-    "summary": "Imagine Mr. Bean stepping into Tom and Jerry--can we generate videos where\ncharacters interact naturally across different worlds? We study inter-character\ninteraction in text-to-video generation, where the key challenge is to preserve\neach character's identity and behaviors while enabling coherent cross-context\ninteraction. This is difficult because characters may never have coexisted and\nbecause mixing styles often causes style delusion, where realistic characters\nappear cartoonish or vice versa. We introduce a framework that tackles these\nissues with Cross-Character Embedding (CCE), which learns identity and\nbehavioral logic across multimodal sources, and Cross-Character Augmentation\n(CCA), which enriches training with synthetic co-existence and mixed-style\ndata. Together, these techniques allow natural interactions between previously\nuncoexistent characters without losing stylistic fidelity. Experiments on a\ncurated benchmark of cartoons and live-action series with 10 characters show\nclear improvements in identity preservation, interaction quality, and\nrobustness to style delusion, enabling new forms of generative\nstorytelling.Additional results and videos are available on our project page:\nhttps://tingtingliao.github.io/mimix/.",
-    "published": "2025-10-06T17:57:39Z",
-    "pdf_url": "http://arxiv.org/pdf/2510.05093v1"
+    "summary": "Neural networks are famously nonlinear. However, linearity is defined\nrelative to a pair of vector spaces, $f$$:$$X$$\\to$$Y$. Is it possible to\nidentify a pair of non-standard vector spaces for which a conventionally\nnonlinear function is, in fact, linear? This paper introduces a method that\nmakes such vector spaces explicit by construction. We find that if we sandwich\na linear operator $A$ between two invertible neural networks, $f(x)=g_y^{-1}(A\ng_x(x))$, then the corresponding vector spaces $X$ and $Y$ are induced by newly\ndefined addition and scaling actions derived from $g_x$ and $g_y$. We term this\nkind of architecture a Linearizer. This framework makes the entire arsenal of\nlinear algebra, including SVD, pseudo-inverse, orthogonal projection and more,\napplicable to nonlinear mappings. Furthermore, we show that the composition of\ntwo Linearizers that share a neural network is also a Linearizer. We leverage\nthis property and demonstrate that training diffusion models using our\narchitecture makes the hundreds of sampling steps collapse into a single step.\nWe further utilize our framework to enforce idempotency (i.e. $f(f(x))=f(x)$)\non networks leading to a globally projective generative model and to\ndemonstrate modular style transfer.",
+    "published": "2025-10-09T17:59:57Z",
+    "pdf_url": "http://arxiv.org/pdf/2510.08570v1"
   },
   {
-    "id": "2510.05092v1",
-    "title": "Learning to Interpret Weight Differences in Language Models",
+    "id": "2510.08569v1",
+    "title": "ArenaBencher: Automatic Benchmark Evolution via Multi-Model Competitive\n  Evaluation",
     "authors": [
-      "Avichal Goel",
-      "Yoon Kim",
-      "Nir Shavit",
-      "Tony T. Wang"
+      "Qin Liu",
+      "Jacob Dineen",
+      "Yuxi Huang",
+      "Sheng Zhang",
+      "Hoifung Poon",
+      "Ben Zhou",
+      "Muhao Chen"
     ],
-    "summary": "Finetuning (pretrained) language models is a standard approach for updating\ntheir internal parametric knowledge and specializing them to new tasks and\ndomains. However, the corresponding model weight changes (\"weight diffs\") are\nnot generally interpretable. While inspecting the finetuning dataset can give a\nsense of how the model might have changed, these datasets are often not\npublicly available or are too large to work with directly. Towards the goal of\ncomprehensively understanding weight diffs in natural language, we introduce\nDiff Interpretation Tuning (DIT), a method that trains models to describe their\nown finetuning-induced modifications. Our approach uses synthetic, labeled\nweight diffs to train a DIT adapter, which can be applied to a compatible\nfinetuned model to make it describe how it has changed. We demonstrate in two\nproof-of-concept settings (reporting hidden behaviors and summarizing finetuned\nknowledge) that our method enables models to describe their finetuning-induced\nmodifications using accurate natural language descriptions.",
-    "published": "2025-10-06T17:57:23Z",
-    "pdf_url": "http://arxiv.org/pdf/2510.05092v1"
+    "summary": "Benchmarks are central to measuring the capabilities of large language models\nand guiding model development, yet widespread data leakage from pretraining\ncorpora undermines their validity. Models can match memorized content rather\nthan demonstrate true generalization, which inflates scores, distorts\ncross-model comparisons, and misrepresents progress. We introduce ArenaBencher,\na model-agnostic framework for automatic benchmark evolution that updates test\ncases while preserving comparability. Given an existing benchmark and a diverse\npool of models to be evaluated, ArenaBencher infers the core ability of each\ntest case, generates candidate question-answer pairs that preserve the original\nobjective, verifies correctness and intent with an LLM as a judge, and\naggregates feedback from multiple models to select candidates that expose\nshared weaknesses. The process runs iteratively with in-context demonstrations\nthat steer generation toward more challenging and diagnostic cases. We apply\nArenaBencher to math problem solving, commonsense reasoning, and safety domains\nand show that it produces verified, diverse, and fair updates that uncover new\nfailure modes, increase difficulty while preserving test objective alignment,\nand improve model separability. The framework provides a scalable path to\ncontinuously evolve benchmarks in step with the rapid progress of foundation\nmodels.",
+    "published": "2025-10-09T17:59:55Z",
+    "pdf_url": "http://arxiv.org/pdf/2510.08569v1"
   },
   {
-    "id": "2510.05089v1",
-    "title": "QuantumBoost: A lazy, yet fast, quantum algorithm for learning with weak\n  hypotheses",
+    "id": "2510.08567v1",
+    "title": "MATRIX: Multimodal Agent Tuning for Robust Tool-Use Reasoning",
     "authors": [
-      "Amira Abbas",
-      "Yanlin Chen",
-      "Tuyen Nguyen",
-      "Ronald de Wolf"
+      "Tajamul Ashraf",
+      "Umair Nawaz",
+      "Abdelrahman M. Shaker",
+      "Rao Anwer",
+      "Philip Torr",
+      "Fahad Shahbaz Khan",
+      "Salman Khan"
     ],
-    "summary": "The technique of combining multiple votes to enhance the quality of a\ndecision is the core of boosting algorithms in machine learning. In particular,\nboosting provably increases decision quality by combining multiple weak\nlearners-hypotheses that are only slightly better than random guessing-into a\nsingle strong learner that classifies data well. There exist various versions\nof boosting algorithms, which we improve upon through the introduction of\nQuantumBoost. Inspired by classical work by Barak, Hardt and Kale, our\nQuantumBoost algorithm achieves the best known runtime over other boosting\nmethods through two innovations. First, it uses a quantum algorithm to compute\napproximate Bregman projections faster. Second, it combines this with a lazy\nprojection strategy, a technique from convex optimization where projections are\nperformed infrequently rather than every iteration. To our knowledge,\nQuantumBoost is the first algorithm, classical or quantum, to successfully\nadopt a lazy projection strategy in the context of boosting.",
-    "published": "2025-10-06T17:56:05Z",
-    "pdf_url": "http://arxiv.org/pdf/2510.05089v1"
+    "summary": "Vision language models (VLMs) are increasingly deployed as controllers with\naccess to external tools for complex reasoning and decision-making, yet their\neffectiveness remains limited by the scarcity of high-quality multimodal\ntrajectories and the cost of manual annotation. We address this challenge with\na vision-centric agent tuning framework that automatically synthesizes\nmultimodal trajectories, generates step-wise preference pairs, and trains a VLM\ncontroller for robust tool-use reasoning. Our pipeline first constructs\nM-TRACE, a large-scale dataset of 28.5K multimodal tasks with 177K verified\ntrajectories, enabling imitation-based trajectory tuning. Building on this, we\ndevelop MATRIX Agent, a controller finetuned on M-TRACE for step-wise tool\nreasoning. To achieve finer alignment, we further introduce Pref-X, a set of\n11K automatically generated preference pairs, and optimize MATRIX on it via\nstep-wise preference learning. Across three benchmarks, Agent-X, GTA, and GAIA,\nMATRIX consistently surpasses both open- and closed-source VLMs, demonstrating\nscalable and effective multimodal tool use. Our data and code is avaliable at\nhttps://github.com/mbzuai-oryx/MATRIX.",
+    "published": "2025-10-09T17:59:54Z",
+    "pdf_url": "http://arxiv.org/pdf/2510.08567v1"
   },
   {
-    "id": "2510.05087v1",
-    "title": "TeachLM: Post-Training LLMs for Education Using Authentic Learning Data",
+    "id": "2510.08566v1",
+    "title": "D$^2$GS: Depth-and-Density Guided Gaussian Splatting for Stable and\n  Accurate Sparse-View Reconstruction",
     "authors": [
-      "Janos Perczel",
-      "Jin Chow",
-      "Dorottya Demszky"
+      "Meixi Song",
+      "Xin Lin",
+      "Dizhe Zhang",
+      "Haodong Li",
+      "Xiangtai Li",
+      "Bo Du",
+      "Lu Qi"
     ],
-    "summary": "The promise of generative AI to revolutionize education is constrained by the\npedagogical limits of large language models (LLMs). A major issue is the lack\nof access to high-quality training data that reflect the learning of actual\nstudents. Prompt engineering has emerged as a stopgap, but the ability of\nprompts to encode complex pedagogical strategies in rule-based natural language\nis inherently limited. To address this gap we introduce TeachLM - an LLM\noptimized for teaching through parameter-efficient fine-tuning of\nstate-of-the-art models. TeachLM is trained on a dataset comprised of 100,000\nhours of one-on-one, longitudinal student-tutor interactions maintained by\nPolygence, which underwent a rigorous anonymization process to protect privacy.\nWe use parameter-efficient fine-tuning to develop an authentic student model\nthat enables the generation of high-fidelity synthetic student-tutor dialogues.\nBuilding on this capability, we propose a novel multi-turn evaluation protocol\nthat leverages synthetic dialogue generation to provide fast, scalable, and\nreproducible assessments of the dialogical capabilities of LLMs. Our\nevaluations demonstrate that fine-tuning on authentic learning data\nsignificantly improves conversational and pedagogical performance - doubling\nstudent talk time, improving questioning style, increasing dialogue turns by\n50%, and greater personalization of instruction.",
-    "published": "2025-10-06T17:55:04Z",
-    "pdf_url": "http://arxiv.org/pdf/2510.05087v1"
+    "summary": "Recent advances in 3D Gaussian Splatting (3DGS) enable real-time,\nhigh-fidelity novel view synthesis (NVS) with explicit 3D representations.\nHowever, performance degradation and instability remain significant under\nsparse-view conditions. In this work, we identify two key failure modes under\nsparse-view conditions: overfitting in regions with excessive Gaussian density\nnear the camera, and underfitting in distant areas with insufficient Gaussian\ncoverage. To address these challenges, we propose a unified framework D$^2$GS,\ncomprising two key components: a Depth-and-Density Guided Dropout strategy that\nsuppresses overfitting by adaptively masking redundant Gaussians based on\ndensity and depth, and a Distance-Aware Fidelity Enhancement module that\nimproves reconstruction quality in under-fitted far-field areas through\ntargeted supervision. Moreover, we introduce a new evaluation metric to\nquantify the stability of learned Gaussian distributions, providing insights\ninto the robustness of the sparse-view 3DGS. Extensive experiments on multiple\ndatasets demonstrate that our method significantly improves both visual quality\nand robustness under sparse view conditions. The project page can be found at:\nhttps://insta360-research-team.github.io/DDGS-website/.",
+    "published": "2025-10-09T17:59:49Z",
+    "pdf_url": "http://arxiv.org/pdf/2510.08566v1"
   },
   {
-    "id": "2510.05083v1",
-    "title": "Robust multicellular programs dissect the complex tumor microenvironment\n  and track disease progression in colorectal adenocarcinomas",
+    "id": "2510.08564v1",
+    "title": "How to Teach Large Multimodal Models New Skills",
     "authors": [
-      "Loan Vulliard",
-      "Teresa Glauner",
-      "Sven Truxa",
-      "Miray Cetin",
-      "Yu-Le Wu",
-      "Ronald Simon",
-      "Laura Behm",
-      "Jovan Tanevski",
-      "Julio Saez-Rodriguez",
-      "Guido Sauter",
-      "Felix J. Hartmann"
+      "Zhen Zhu",
+      "Yiming Gong",
+      "Yao Xiao",
+      "Yaoyao Liu",
+      "Derek Hoiem"
     ],
-    "summary": "Colorectal cancer (CRC) is highly heterogeneous, with five-year survival\nrates dropping from $\\sim$90% in localized disease to $\\sim$15% with distant\nmetastases. Disease progression is shaped not only by tumor-intrinsic\nalterations but also by the reorganization of the tumor microenvironment (TME).\nMetabolic, compositional, and spatial changes contribute to this progression,\nbut considered individually they lack context and often fail as therapeutic\ntargets. Understanding their coordination could reveal processes to alter the\ndisease course. Here, we combined multiplexed ion beam imaging (MIBI) with\nmachine learning to profile metabolic, functional and spatial states of 522\ncolorectal lesions with single-cell resolution. We observed recurrent\nstage-specific remodeling marked by a lymphoid-to-myeloid shift, stromal-cancer\ncooperation, and malignant metabolic shifts. Spatial organization of\nepithelial, stromal, and immune compartments provided stronger stratification\nof disease stage than tumor-intrinsic changes or bulk immune infiltration\nalone. To systematically model these coordinated changes, we condensed\nmultimodal features into 10 latent factors of TME organization. These factors\ntracked disease progression, were conserved across cohorts, and revealed\nfrequent multicellular metabolic niches and distinct, non-exclusive TME\ntrajectories. Our framework MuVIcell exposes the elements that together drive\nCRC progression by grouping co-occurring changes across cell types and feature\nclasses into coordinated multicellular programs. This creates a rational basis\nto therapeutically target TME reorganization. Importantly, the framework is\nscalable and flexible, offering a resource for studying multicellular\norganization in other solid tumors.",
-    "published": "2025-10-06T17:51:26Z",
-    "pdf_url": "http://arxiv.org/pdf/2510.05083v1"
+    "summary": "How can we teach large multimodal models (LMMs) new skills without erasing\nprior abilities? We study sequential fine-tuning on five target skills while\nmonitoring general ability on eight held-out benchmarks across three model\nfamilies. We observe that apparent \"forgetting\" on held-out tasks after narrow\nfine-tuning can partly recover at later stages. We trace this behavior to a\nmeasurable shift in the output token distribution, manifested through a simple\ncounting-bias probe that co-varies with forgetting. Guided by this picture, we\nidentify two simple, robust tuning recipes that learn strongly while limiting\ndrift: (i) updating only the self-attention projection layers, and (ii)\nupdating only the MLP Gate&Up while freezing the Down projection. Across models\nand tasks, these choices deliver strong target gains while largely preserving\nheld-out performance. Code is available at\nhttps://github.com/jessemelpolio/LMM_CL",
+    "published": "2025-10-09T17:59:37Z",
+    "pdf_url": "http://arxiv.org/pdf/2510.08564v1"
   },
   {
-    "id": "2510.05080v1",
-    "title": "MICROTRIPS: MICRO-geography TRavel Intelligence and Pattern Synthesis",
+    "id": "2510.08562v1",
+    "title": "ResAD: Normalized Residual Trajectory Modeling for End-to-End Autonomous\n  Driving",
     "authors": [
-      "Yangyang Wang",
-      "Tayo Fabusuyi"
+      "Zhiyu Zheng",
+      "Shaoyu Chen",
+      "Haoran Yin",
+      "Xinbang Zhang",
+      "Jialv Zou",
+      "Xinggang Wang",
+      "Qian Zhang",
+      "Lefei Zhang"
     ],
-    "summary": "This study presents a novel small-area estimation framework to enhance urban\ntransportation planning through detailed characterization of travel behavior.\nOur approach improves on the four-step travel model by employing publicly\navailable microdata files and machine learning methods to predict travel\nbehavior for a representative, synthetic population at small geographic areas.\nThis approach enables high-resolution estimation of trip generation, trip\ndistribution, mode choice, and route assignment. Validation using ACS/PUMS\nwork-commute datasets demonstrates that our framework achieves higher accuracy\ncompared to conventional approaches. The resulting granular insights enable the\ntailoring of interventions to address localized situations and support a range\nof policy applications and targeted interventions, including the optimal\nplacement of micro-fulfillment centers, effective curb-space management, and\nthe design of more inclusive transportation solutions particularly for\nvulnerable communities.",
-    "published": "2025-10-06T17:50:56Z",
-    "pdf_url": "http://arxiv.org/pdf/2510.05080v1"
+    "summary": "End-to-end autonomous driving (E2EAD) systems, which learn to predict future\ntrajectories directly from sensor data, are fundamentally challenged by the\ninherent spatio-temporal imbalance of trajectory data. This imbalance creates a\nsignificant optimization burden, causing models to learn spurious correlations\ninstead of causal inference, while also prioritizing uncertain, distant\npredictions, thereby compromising immediate safety. To address these issues, we\npropose ResAD, a novel Normalized Residual Trajectory Modeling framework.\nInstead of predicting the future trajectory directly, our approach reframes the\nlearning task to predict the residual deviation from a deterministic inertial\nreference. The inertial reference serves as a counterfactual, forcing the model\nto move beyond simple pattern recognition and instead identify the underlying\ncausal factors (e.g., traffic rules, obstacles) that necessitate deviations\nfrom a default, inertially-guided path. To deal with the optimization imbalance\ncaused by uncertain, long-term horizons, ResAD further incorporates Point-wise\nNormalization of the predicted residual. It re-weights the optimization\nobjective, preventing large-magnitude errors associated with distant, uncertain\nwaypoints from dominating the learning signal. Extensive experiments validate\nthe effectiveness of our framework. On the NAVSIM benchmark, ResAD achieves a\nstate-of-the-art PDMS of 88.6 using a vanilla diffusion policy with only two\ndenoising steps, demonstrating that our approach significantly simplifies the\nlearning task and improves model performance. The code will be released to\nfacilitate further research.",
+    "published": "2025-10-09T17:59:36Z",
+    "pdf_url": "http://arxiv.org/pdf/2510.08562v1"
   },
   {
-    "id": "2510.05071v1",
-    "title": "Neuroplastic Modular Framework: Cross-Domain Image Classification of\n  Garbage and Industrial Surfaces",
+    "id": "2510.08563v1",
+    "title": "Where Have All the Kaczmarz Iterates Gone?",
     "authors": [
-      "Debojyoti Ghosh",
-      "Soumya K Ghosh",
-      "Adrijit Goswami"
+      "El Houcine Bergou",
+      "Soumia Boucherouite",
+      "Aritra Dutta",
+      "Xin Li",
+      "Anna Ma"
     ],
-    "summary": "Efficient and accurate classification of waste and industrial surface defects\nis essential for ensuring sustainable waste management and maintaining high\nstandards in quality control. This paper introduces the Neuroplastic Modular\nClassifier, a novel hybrid architecture designed for robust and adaptive image\nclassification in dynamic environments. The model combines a ResNet-50 backbone\nfor localized feature extraction with a Vision Transformer (ViT) to capture\nglobal semantic context. Additionally, FAISS-based similarity retrieval is\nincorporated to provide a memory-like reference to previously encountered data,\nenriching the model's feature space. A key innovation of our architecture is\nthe neuroplastic modular design composed of expandable, learnable blocks that\ndynamically grow during training when performance plateaus. Inspired by\nbiological learning systems, this mechanism allows the model to adapt to data\ncomplexity over time, improving generalization. Beyond garbage classification,\nwe validate the model on the Kolektor Surface Defect Dataset 2 (KolektorSDD2),\nwhich involves industrial defect detection on metal surfaces. Experimental\nresults across domains show that the proposed architecture outperforms\ntraditional static models in both accuracy and adaptability. The Neuroplastic\nModular Classifier offers a scalable, high-performance solution for real-world\nimage classification, with strong applicability in both environmental and\nindustrial domains.",
-    "published": "2025-10-06T17:47:45Z",
-    "pdf_url": "http://arxiv.org/pdf/2510.05071v1"
+    "summary": "The randomized Kaczmarz (RK) algorithm is one of the most computationally and\nmemory-efficient iterative algorithms for solving large-scale linear systems.\nHowever, practical applications often involve noisy and potentially\ninconsistent systems. While the convergence of RK is well understood for\nconsistent systems, the study of RK on noisy, inconsistent linear systems is\nlimited. This paper investigates the asymptotic behavior of RK iterates in\nexpectation when solving noisy and inconsistent systems, addressing the\nlocations of their limit points. We explore the roles of singular vectors of\nthe (noisy) coefficient matrix and derive bounds on the convergence horizon,\nwhich depend on the noise levels and system characteristics. Finally, we\nprovide extensive numerical experiments that validate our theoretical findings,\noffering practical insights into the algorithm's performance under realistic\nconditions. These results establish a deeper understanding of the RK\nalgorithm's limitations and robustness in noisy environments, paving the way\nfor optimized applications in real-world scientific and engineering problems.",
+    "published": "2025-10-09T17:59:36Z",
+    "pdf_url": "http://arxiv.org/pdf/2510.08563v1"
   }
 ]
