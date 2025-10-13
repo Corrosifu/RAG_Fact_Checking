@@ -247,7 +247,9 @@ class Retrieval:
         corpus_sparse = [chunk["text"] for chunk in chunked_dataset]
         return Retrieval(sparse_corpus=corpus_sparse)
 
-if __name__ =="__main__":
+if __name__=="__main__":
 
-    retriever=print(Retrieval().retrieve(query="How Quantization work"))
-    print("hello")
+
+    retriever=Retrieval()
+
+    print(retriever.retrieve(query="How Quantization work"))

@@ -6,7 +6,6 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 # Optimize CUDA memory allocation for large model inference.
 os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "max_split_size_mb:32,expandable_segments:True"
 
-
 class Generator:
     """
     Pedagogical scientific explanation generator.
@@ -39,7 +38,8 @@ class Generator:
         self,
         model_name: str = "meta-llama/Llama-3.2-1B-Instruct",
         device: str = None,
-        max_context_chars: int = 1500
+        max_context_chars: int = 1500,
+        token: str=None
     ):
         """
         Initialize the generator model and tokenizer.
@@ -58,11 +58,13 @@ class Generator:
 
         # --- Model loading ---
         print(f"📦 Loading model {model_name} on {self.device}...")
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=False)
+        self.token=token or os.getenv("HF_TOKEN")
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=False,token=self.token)
         self.model = AutoModelForCausalLM.from_pretrained(
             model_name,
             torch_dtype=torch.float16 if self.device == "cuda" else torch.float32,
-            device_map="auto" if self.device == "cuda" else None
+            device_map="auto" if self.device == "cuda" else None,
+            token=self.token
         )
         print("✅ Model loaded successfully.")
 

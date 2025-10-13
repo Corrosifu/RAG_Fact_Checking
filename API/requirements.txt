@@ -1,0 +1,24 @@
+camelot_py==1.0.9
+datasets==4.0.0
+fastapi==0.119.0
+feedparser==6.0.12
+langchain==0.3.27
+langchain_community==0.3.31
+langchain_huggingface==0.3.1
+langsmith==0.4.34
+numpy==2.3.3
+pandas==2.3.3
+pdfplumber==0.11.7
+pydantic==2.12.0
+pymupdf4llm==0.0.27
+ragas==0.3.6
+rank_bm25==0.2.2
+tqdm==4.67.1
+transformers==4.57.0
+uvicorn==0.37.0
+sentence-transformers==5.1.1
+faiss_cpu==1.12.0
+accelerate==1.10.0
+--extra-index-url https://download.pytorch.org/whl/cu118
+torch==2.7.1
+
