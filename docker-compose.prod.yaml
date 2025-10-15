@@ -1,0 +1,26 @@
+#Docker-compose for Azure deployment
+version: "3.9"
+services:
+  backend:
+    image: ${REG_LOGIN_SERVER}/rag-backend:latest
+    ports: ["8000:8000"]
+    environment:
+      - HF_TOKEN=${HF_TOKEN}
+      - TRANSFORMERS_CACHE=/hf_cache
+      - HUGGINGFACE_HUB_CACHE=/hf_cache
+      - UVICORN_HOST=0.0.0.0
+      - UVICORN_PORT=8000
+    volumes:
+      - hf_cache:/hf_cache
+    restart: unless-stopped
+
+  frontend:
+    image: ${REG_LOGIN_SERVER}/rag-frontend:latest
+    ports: ["8501:8501"]
+    environment:
+      - BACKEND_URL=http://localhost:8000
+      - STREAMLIT_PORT=8501
+    depends_on: [backend]
+    restart: unless-stopped
+
+volumes: { hf_cache: {} }

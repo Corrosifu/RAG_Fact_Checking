@@ -1,3 +1,5 @@
+#Docker compose for deployment on prem
+
 version: "3.9"
 
 services:
@@ -8,9 +10,9 @@ services:
     ports:
       - "8000:8000"
     environment:
-      # Pass your HF token into the container (either via .env or exported env var)
+     
       - HF_TOKEN=${HF_TOKEN}
-      # Persist and share the model cache so downloads survive rebuilds
+      
       - HF_CACHE=/hf_cache
       - HUGGINGFACE_HUB_CACHE=/hf_cache
     volumes:
@@ -18,11 +20,8 @@ services:
     restart: unless-stopped
     networks:
       - rag_network
-    # --- Optional GPU support ---
-    # Uncomment ONE of the following if you run with NVIDIA GPUs:
+
     gpus: all
-    # device_requests:
-    #   - capabilities: ["gpu"]
 
   frontend:
     build:

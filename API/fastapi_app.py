@@ -1,21 +1,20 @@
-# fastapi_app.py
 from fastapi import FastAPI
 from pydantic import BaseModel
 from RAG.rag import RAG 
 
 app = FastAPI(title="RAG API")
 
-# Initialize RAG
+
 rag = RAG()
 
 class QueryRequest(BaseModel):
     query: str
-    
+
 @app.get("/")
 def root():
     return {"status": "🚀 API is running!"}
 
-# ask processus from fast api
+
 @app.post("/query")
 def ask_question(payload: QueryRequest):
     query = payload.query

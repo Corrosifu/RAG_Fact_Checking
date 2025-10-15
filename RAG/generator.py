@@ -136,7 +136,7 @@ class Generator:
     # ----------------------------
     # Generation
     # ----------------------------
-    def generate(self, query: str, context: list, max_tokens: int = 224) -> str:
+    def generate(self, query: str, context: list, max_tokens: int = 256) -> str:
         """
         Generate a pedagogical answer to a scientific or ML question.
 
