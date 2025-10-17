@@ -139,10 +139,12 @@ Example output:
 - RAGAS metrics rely on LLM grading — subject to rate limits or cost for API-based models.
 - Future improvements:
   - Support for structured multimodal data (tables, graphs, images)
+  - Multi sources scientific papers
+  - Multi fields scientific papers
   - Fine-tuning of domain-specific embedding models
   - Distributed evaluation for larger QA sets
   - Integration of guardrails and fact-checking modules
-  - n
+    
   
 ---
 
@@ -155,7 +157,69 @@ git clone https://github.com/Corrosifu/RAG_Fact_Checking.git
 cd RAG_Fact_Checking
 python -m uvicorn API.fastapi_app:app --reload --host 127.0.0.1 --port 8000
 python -m streamlit run UI/streamlit_ui.py
+```
+2. **Launch the app on docker**
+```bash
+docker-compose build
+docker-compose up
+```
 
+4. **Launch the app on Azure**
 ---
+After login
+```bash
+$env:HF_TOKEN = "hf_xxx_your_token_here"
 
 
+$RG  = "rg-rag-portfolio"
+$LOC = "francecentral"
+$APP = "rag-portfolio-app"
+$ACR = "ragportfolioacr"   # pick a unique name
+
+
+az group create -n $RG -l $LOC
+
+
+az acr create -n $ACR -g $RG --sku Standard
+$REG_LOGIN_SERVER = az acr show -n $ACR -g $RG --query loginServer -o tsv
+
+az acr build -r $ACR -t "$REG_LOGIN_SERVER/rag-backend:latest"  -f API/Dockerfile .
+az acr build -r $ACR -t "$REG_LOGIN_SERVER/rag-frontend:latest" -f UI/Dockerfile .
+
+
+az appservice plan create -g $RG -n "asp-rag" --is-linux --sku P1v3
+az webapp create -g $RG -p "asp-rag" -n $APP `
+  --multicontainer-config-type compose `
+  --multicontainer-config-file docker-compose.prod.yml
+
+
+az webapp identity assign -g $RG -n $APP
+$PRINCIPAL_ID = az webapp identity show -g $RG -n $APP --query principalId -o tsv
+$ACR_ID       = az acr show -n $ACR -g $RG --query id -o tsv
+az role assignment create --assignee $PRINCIPAL_ID --role "AcrPull" --scope $ACR_ID
+
+
+$STG = "stragcache$([System.Guid]::NewGuid().ToString('N').Substring(0,8))"
+az storage account create -g $RG -n $STG -l $LOC --sku Standard_LRS
+az storage share-rm create -g $RG --storage-account $STG --name hf-cache
+$STG_KEY = az storage account keys list -g $RG -n $STG --query "[0].value" -o tsv
+
+az webapp config storage-account add -g $RG -n $APP `
+  --custom-id hf-cache --storage-type AzureFiles `
+  --account-name $STG --share-name hf-cache --access-key "$STG_KEY" `
+  --mount-path /hf_cache
+
+
+az webapp config appsettings set -g $RG -n $APP --settings `
+  REG_LOGIN_SERVER=$REG_LOGIN_SERVER `
+  HF_TOKEN="$env:HF_TOKEN"
+
+
+az webapp config container set -g $RG -n $APP `
+  --multicontainer-config-type compose `
+  --multicontainer-config-file docker-compose.prod.yml
+az webapp restart -g $RG -n $APP
+
+
+az webapp show -g $RG -n $APP --query defaultHostName -o tsv
+```
