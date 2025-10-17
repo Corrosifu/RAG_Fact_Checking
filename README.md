@@ -1,57 +1,161 @@
-<h1 align="center">🧠 Scientific QA RAG Evaluation Framework</h1>
-<p align="center">
-    <i>Production-ready RAG pipeline for accurate and trustworthy scientific question answering.</i><br>
-    <b>Retriever • Generator • Evaluator • Visualizer • Logger</b>
-</p>
+# 🧠 Scientific QA — RAG Evaluation Pipeline
 
-<p align="center">
-  <img src="https://img.shields.io/badge/python-3.10+-blue?logo=python" alt="Python version" />
-  <img src="https://img.shields.io/badge/RAG-pipeline-orange" alt="RAG" />
-  <img src="https://img.shields.io/badge/LLM-HuggingFace-yellow" alt="LLM" />
-  <img src="https://img.shields.io/badge/Evaluation-RAGAS-green" alt="RAGAS" />
-  <img src="https://img.shields.io/badge/License-MIT-lightgrey" alt="MIT" />
-</p>
+## 📌 Description
+
+The goal of this project is to design, implement, and evaluate a **Retrieval-Augmented Generation (RAG)** system specialized in **scientific question answering**.  
+Unlike classic LLM-based QA, the RAG approach combines **external knowledge retrieval** with **generative reasoning**, improving **faithfulness** and **relevance** — key in scientific and technical domains.
+
+This project also provides a **robust evaluation framework** using RAGAS metrics, making it possible to **quantify performance** and adapt models to various business or research contexts.
 
 ---
 
-## 🧭 1. **Context**
+## 📑 Table of Contents
 
-In fields like medicine, physics, and engineering, **accuracy matters more than fluency**.  
-Large Language Models (LLMs) are powerful — but without **evidence-grounded reasoning**, they can **hallucinate**.  
-
-This project was built to:
-- 🔎 Retrieve **relevant scientific knowledge**
-- 🧠 Generate **trustworthy** answers
-- 📊 Evaluate the system using **meaningful metrics**
-- 🚀 Offer a modular structure that can **scale to enterprise use cases**
-
----
-
-## 🎯 2. **Goal of the Project**
-
-The main objective is to build an **end-to-end RAG Evaluation Framework** that companies could adapt to:
-- ✅ Benchmark different retrievers & LLMs on scientific QA datasets
-- 🧪 Track performance with structured metrics (faithfulness, relevancy…)
-- 🧰 Swap components (retriever/model/metric) with minimal code changes
-- 🧭 Deploy or run locally, with or without paid APIs
-
-> 🧑‍💻 This showcases my skills in **LLM engineering**, **evaluation**, **MLOps structure**, and **production-grade software design**.
+- [Description](#-description)
+- [1. Test Structuring and Use Cases](#1-test-structuring-and-use-cases)
+- [2. Datasets and Metric Choices](#2-datasets-and-metric-choices)
+- [3. Data and Document Preprocessing](#3-data-and-document-preprocessing)
+- [4. Method Evaluation](#4-method-evaluation)
+  - [Retriever Strategy](#retriever-strategy)
+  - [Generator Strategy](#generator-strategy)
+  - [RAG Evaluation with RAGAS](#rag-evaluation-with-ragas)
+- [5. Constraints and Future Directions](#5-constraints-and-future-directions)
+- [Installation and Prerequisites](#installation-and-prerequisites)
+- [Usage](#usage)
+- [Authors and Contributions](#authors-and-contributions)
+- [Resources and References](#resources-and-references)
 
 ---
 
-## 🏢 3. **Company Usage Example**
+## 🧪 1. Test Structuring and Use Cases
 
-| Feature                          | Use Case in Companies                                               |
-|-----------------------------------|---------------------------------------------------------------------|
-| Modular RAG pipeline             | Quickly compare models/retrievers in an internal QA system         |
-| RAGAS metrics                    | Evaluate hallucinations in regulatory domains (e.g., finance, med) |
-| Lightweight local models         | On-prem deployment with no API dependency                          |
-| Logging & visualization          | Integrate with dashboards and experimentation tracking             |
-| Docker-ready structure           | Easy to plug into existing infra (CI/CD, cloud, local cluster)     |
+📁RAG_FACT_CHECKING/
+│
+├─ API/# backend
+│   ├─ fastapi_app.py
+│   └─ requirements.txt
+|   └─ dockerfile
+├─ UI/# frontend
+│   ├─ streamlit_ui.py
+│   └─ requirements.txt
+|   └─ dockerfile
+├─ RAG/# RAG process from data collect to generation phase
+│   ├─ ingestion.py
+|   └─ chunking.py
+|   └─ embedding.py
+|   └─ data_pipeline.py
+|   └─ retriever.py
+|   └─ generator.py
+│   └─ rag.py
+├─ Evaluation/ #Evaluate the rag performances 
+│   ├─ dataset_builder.py
+|   └─ logger.py
+|   └─ metric_runner.py
+|   └─ llm_judge.py
+|   └─ vizualization.py
+|   └─ evaluation.py
+│   └─ test.ipynb
+|   
+└─ config.py
+└─ docker-compose.yml # On prem deployment 
+└─ docker-compose.prod.yml # Azure deployment
 
-👉 *This kind of pipeline could fit directly in an ML team workflow for R&D or product evaluation.*
+- Development of a **scientific question-answering system** combining:
+  - Semantic document retrieval
+  - Lightweight or open-source language models
+  - Grounded answer generation
+- Modular architecture allowing:
+  - Easy swapping of retrievers and LLMs
+  - Batch evaluation of test queries
+- Typical use cases:
+  - 🏢 **Companies** building internal scientific assistants
+  - 🧠 **Researchers** evaluating factual grounding
+  - 🧪 **Developers** experimenting with RAG pipelines on limited hardware (4GB VRAM)
 
 ---
 
-## 🧱 4. **Project Structure**
+## 📊 2. Datasets and Metric Choices
+
+- Integration of domain-specific scientific texts or public knowledge corpora.
+- Vectorization using dense embeddings (e.g. `sentence-transformers`).
+- Sample test set: handcrafted QA pairs for evaluation.
+- Evaluation metrics via **RAGAS**:
+  - **Faithfulness** — factual alignment with retrieved documents
+  - **Context precision & recall** — retrieval quality
+  - **Answer relevancy** — user-centric response evaluation
+
+---
+
+## 🧹 3. Data and Document Preprocessing
+
+- Document cleaning and normalization (HTML removal, lowercasing, sentence segmentation).
+- Embedding generation via Hugging Face models (e.g. MiniLM, BGE-small).
+- FAISS index construction for efficient similarity search.
+- Optional metadata filtering to simulate realistic scientific search.
+
+---
+
+## 🧠 4. Method Evaluation
+
+### 🧭 Retriever Strategy
+
+- Implementation of a **dense retriever** (FAISS) to index and search relevant documents.
+- Comparison with potential BM25 or hybrid strategies.
+- Focus on:
+  - Retrieval accuracy
+  - Context coverage
+  - Efficiency on consumer hardware
+
+### 🪄 Generator Strategy
+
+- Lightweight **open-source LLMs** (e.g. TinyLlama, DistilGPT2) used for local inference.
+- Option to plug larger or cloud-hosted models for benchmarking.
+- Response generation designed to stay aligned with retrieved context.
+
+### 📈 RAG Evaluation with RAGAS
+
+| Metric                | Description                                          | Insight                                  |
+|-----------------------|------------------------------------------------------|-------------------------------------------|
+| Faithfulness          | Measures factual grounding of the answer             | Detects hallucinations                    |
+| Context Precision     | Relevance of retrieved context                       | Retrieval quality                         |
+| Context Recall        | Coverage of relevant context                         | Completeness of context                   |
+| Answer Relevancy      | Alignment of answer with expected reference          | User satisfaction                         |
+
+- Evaluation is automated through the `Eval_Pipeline` class.
+- Results stored as a Pandas DataFrame and visualized through custom plots.
+
+Example output:
+
+| user_input                     | faithfulness | context_precision | context_recall | answer_relevancy | mean_score |
+|----------------------------------|--------------|--------------------|----------------|------------------|------------|
+| What is RAG in ML?             | 0.89         | 0.92               | 0.87           | 0.90             | 0.89       |
+
+---
+
+## ⚠️ 5. Constraints and Future Directions
+
+- **Resource constraints**: optimized for 4GB VRAM setups, limiting LLM and database size but also embedding and retrieving strategy.
+- Open-source models offer flexibility but lower raw performance vs GPT-4.
+- RAGAS metrics rely on LLM grading — subject to rate limits or cost for API-based models.
+- Future improvements:
+  - Support for structured multimodal data (tables, graphs, images)
+  - Fine-tuning of domain-specific embedding models
+  - Distributed evaluation for larger QA sets
+  - Integration of guardrails and fact-checking modules
+  - n
+  
+---
+
+## ⚙️ Installation and Prerequisites
+
+
+1. **Clone the repository and launch the app locally**
+```bash
+git clone https://github.com/Corrosifu/RAG_Fact_Checking.git
+cd RAG_Fact_Checking
+python -m uvicorn API.fastapi_app:app --reload --host 127.0.0.1 --port 8000
+python -m streamlit run UI/streamlit_ui.py
+
+---
+
 
