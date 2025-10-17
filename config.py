@@ -27,3 +27,13 @@ FASTAPI_HOST = "0.0.0.0"
 FASTAPI_PORT = 8000
 
 
+#Evaluation Parameters
+
+DEFAULT_METRICS = ["faithfulness", "context_precision", "context_recall", "answer_relevancy"]
+
+# Paths
+RESULTS_DIR = "evaluation/results"
+DEFAULT_CSV_PATH = f"{RESULTS_DIR}/results.csv"
+
+# LangSmith project (optional)
+LANGSMITH_PROJECT = "rag-eval-experiments"

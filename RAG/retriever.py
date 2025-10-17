@@ -229,23 +229,7 @@ class Retrieval:
         merged = self.merge_results(dense_docs, sparse_docs)
         return self.rerank(merged, query)
 
-    @staticmethod
-    def run():
-        """
-        Factory method to instantiate a Retrieval pipeline.
 
-        Loads pre-chunked SciBERT dataset and constructs
-        both dense and sparse retrievers.
-
-        Returns
-        -------
-        Retrieval
-            Initialized Retrieval object ready for querying.
-        """
-        
-        chunked_dataset = SciBERTChunker.load_articles(CHUNKED_JSON)
-        corpus_sparse = [chunk["text"] for chunk in chunked_dataset]
-        return Retrieval(sparse_corpus=corpus_sparse)
 
 if __name__=="__main__":
 
