@@ -189,14 +189,14 @@ print(response)
 
 ## 📉 7. Limitations
 
-| Area | Limitation | Reason |
-|------|-----------|--------|
-| **Hardware** | Limited to ≈ 4 GB VRAM | Larger models (e.g., 7B+) cannot fit |
-| **Model Coverage** | Only English arXiv papers; images/tables not used | Dataset not multilingual or multimodal |
-| **Retrieval Speed** | BM25 tokenization on CPU | Non‑quantized models & CPU tokenization |
-| **Generator Context** | ~1 500 char context window | Prevents OOM on small GPUs |
-| **Factual Grounding** | Evaluation folder not fully functional | No automated verification scoring yet |
-| **Persistence** | Local FAISS only | No online DB or UI persistence |
+| Area                       | Limitation                                             | Explanation                                                                                      |
+| -------------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
+| **Hardware Constraints**   | Works with ~4 GB VRAM                                  | Designed for lightweight models; larger ones (e.g., 7B+) exceed memory capacity.                 |
+| **Model Scope**            | Processes only English arXiv papers (no images/tables) | Current ingestion pipeline supports text-only data and lacks multilingual or multimodal support. |
+| **Retrieval Performance**  | BM25 and embedding computation run on CPU              | No GPU acceleration or model quantization, which limits retrieval speed.                         |
+| **Generator Context Size** | Context limited to ~1,500 characters                   | Restriction prevents out-of-memory (OOM) errors on smaller GPUs.                                 |
+| **Fact Verification**      | Evaluation module not fully integrated                 | Automated verification and scoring of factual consistency are planned but not yet implemented.   |
+| **Data Persistence**       | Results stored locally via FAISS                       | No cloud database or persistent UI yet; data resets between sessions.                            |
 
 ---
 
