@@ -78,7 +78,7 @@ arXiv → PDF ingestion → Markdown extraction → SciBERT chunking
       → LLaMA generator → Pedagogical explanation
 ```
 
-[![Contributions welcome](file:///C:/Users/user/Downloads/Untitled%20diagram-2025-10-18-165718.svg)](#)
+![RAG Pipeline Diagram](img/diagram.svg)
 
 
 ### 📦 Repository Structure
@@ -170,7 +170,7 @@ python -m RAG.data_pipeline
 # Run the RAG (retriever + generator)
 python -m RAG.rag
 ```
-![RAG Pipeline Diagram](img/diagram.svg)
+
 
 ---
 
