@@ -80,7 +80,7 @@ arXiv → PDF ingestion → Markdown extraction → SciBERT chunking
 
 <p align="center">
   <picture>
-    <img src="docs/diagram" alt="RAG Fact-Checking Pipeline" style="width:900%; max-width:2000px;">
+    <img src="img/diagram" alt="RAG Fact-Checking Pipeline" style="width:900%; max-width:2000px;">
   </picture>
 </p>
 
