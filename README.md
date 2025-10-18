@@ -78,6 +78,77 @@ arXiv → PDF ingestion → Markdown extraction → SciBERT chunking
       → LLaMA generator → Pedagogical explanation
 ```
 
+flowchart LR
+  %% Styles
+  classDef io fill:#f7f7f7,stroke:#bbb,color:#111,stroke-width:1px
+  classDef proc fill:#e8f1ff,stroke:#3b82f6,color:#0b3b8f,stroke-width:1px
+  classDef ml fill:#eef9f0,stroke:#16a34a,color:#135c1e,stroke-width:1px
+  classDef store fill:#fff7ed,stroke:#f59e0b,color:#7c3b00,stroke-width:1px
+  classDef serve fill:#fdf2f8,stroke:#ec4899,color:#7a1e4d,stroke-width:1px
+  classDef aux fill:#f3f4f6,stroke:#9ca3af,color:#111,stroke-width:1px
+
+  %% Inputs
+  A[arXiv API\nFeedparser]:::io --> B[PDF Download\nrequests]:::proc
+  B --> C[Text/Markdown Extraction\npdfplumber / pymupdf4llm]:::proc
+  C --> D[Structured Dataset (JSON)\nmetadata + content]:::store
+
+  %% Preprocess & Chunk
+  D --> E[SciBERT Tokenization & Chunking\nTransformers tokenizer]:::proc
+
+  %% Embedding & Index
+  E --> F[Embeddings (dense)\nQwen3-Embedding-0.6B]:::ml
+  F --> G[FAISS Index\nLangChain FAISS]:::store
+
+  %% Sparse side
+  E --> H[Sparse Corpus\n(tokenized text)]:::store
+  H --> I[BM25 (lexical)]:::ml
+
+  %% Retrieval
+  subgraph R[Hybrid Retrieval]
+    J[Query]:::io --> K[Dense Search\nFAISS k-NN]:::ml
+    J --> L[Sparse Search\nBM25]:::ml
+    K --> M[Merge + De-dup]:::proc
+    L --> M
+    M --> N[Cross-Encoder Reranker\nMiniLM (ms-marco)]:::ml
+  end
+
+  %% Connect index to retrieval
+  G --> K
+  I --> L
+
+  %% Generation
+  N --> O[Context Pack (top-N passages)]:::store
+  O --> P[LLaMA 3.2 1B-Instruct\nPedagogical Prompting]:::ml
+  P --> Q[Final Answer]:::io
+
+  %% Serving / UI
+  subgraph S[Serving & Deployment]
+    U[FastAPI Backend]:::serve
+    V[Streamlit UI]:::serve
+    W[Docker / Docker Compose]:::serve
+    X[Azure App Service (optional)]:::serve
+  end
+
+  %% Data/Model Artifacts
+  subgraph T[Local Artifacts]
+    D
+    G
+    H
+  end
+
+  %% Wires
+  J <-->|/ask| V
+  V --> U
+  U --> J
+  U --> Q
+  W -. containerizes .- U
+  W -. containerizes .- V
+  X -. deploys .- W
+
+  %% Notes
+  Y[[Note: Designed for ~4GB VRAM + CPU\nBatching, normalize_embeddings, CPU-friendly reranker]]:::aux
+
+
 ### 📦 Repository Structure
 
 ```text
