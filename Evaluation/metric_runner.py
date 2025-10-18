@@ -24,9 +24,9 @@ class MetricRunner:
         return HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
     def _build_llm(self):
-        model_id = "microsoft/phi-3-mini-128k-instruct"
+        model_id = "microsoft/Phi-3-mini-128k-instruct-onnx"
         self.tok = AutoTokenizer.from_pretrained(model_id)
-        mdl = AutoModelForCausalLM.from_pretrained(model_id)
+        mdl = AutoModelForCausalLM.from_pretrained(model_id,trust_remote_code=True)
         gen = pipeline(
             "text-generation",
             model=mdl,

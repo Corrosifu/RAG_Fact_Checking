@@ -1,5 +1,5 @@
 import torch
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, AutoModelForCausalLM
 
 class LLMJudge:
     """
@@ -8,14 +8,14 @@ class LLMJudge:
 
     def __init__(
         self,
-        model_name: str = "google/flan-t5-small",
+        model_name: str = "meta-llama/Llama-3.2-1B-Instruct",
         device: str = None,
         max_new_tokens: int = 256
     ):
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         print(f"📦 Loading judge model '{model_name}' on {self.device}...")
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-        self.model = AutoModelForSeq2SeqLM.from_pretrained(model_name).to(self.device)
+        self.model = AutoModelForCausalLM.from_pretrained(model_name).to(self.device)
         self.max_new_tokens = max_new_tokens
         print("✅ Judge model loaded successfully.")
 
