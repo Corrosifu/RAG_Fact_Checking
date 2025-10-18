@@ -78,7 +78,12 @@ arXiv → PDF ingestion → Markdown extraction → SciBERT chunking
       → LLaMA generator → Pedagogical explanation
 ```
 
-<img src="docs/diagram.svg" alt="RAG Pipeline Diagram" width="8000"/>
+<p align="center">
+  <picture>
+    <img src="docs/diagram" alt="RAG Fact-Checking Pipeline" style="width:900%; max-width:2000px;">
+  </picture>
+</p>
+
 
 
 ### 📦 Repository Structure
