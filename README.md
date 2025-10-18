@@ -170,6 +170,7 @@ python -m RAG.data_pipeline
 # Run the RAG (retriever + generator)
 python -m RAG.rag
 ```
+![RAG Pipeline Diagram](img/diagram.svg)
 
 ---
 
