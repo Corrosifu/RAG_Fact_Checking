@@ -77,8 +77,8 @@ arXiv → PDF ingestion → Markdown extraction → SciBERT chunking
       → FAISS + BM25 hybrid retrieval → Cross‑encoder reranking
       → LLaMA generator → Pedagogical explanation
 ```
-[(file:///C:/Users/user/Downloads/Untitled%20diagram-2025-10-18-165718.svg)]
 
+[![Contributions welcome](file:///C:/Users/user/Downloads/Untitled%20diagram-2025-10-18-165718.svg)](#
 
 
 ### 📦 Repository Structure
