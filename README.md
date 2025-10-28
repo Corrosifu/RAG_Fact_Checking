@@ -78,7 +78,14 @@ arXiv → PDF ingestion → Markdown extraction → SciBERT chunking
       → LLaMA generator → Pedagogical explanation
 ```
 
-![RAG Pipeline Diagram](img/diagram)
+<p align="center">
+  <img src="img/diagram"
+       alt="RAG Fact-Checking Architecture"
+       width="900">
+  <br>
+  <em>Figure — End-to-end RAG pipeline from arXiv ingestion to retrieval and generation.</em>
+</p>
+
 
 
 ### 📦 Repository Structure
