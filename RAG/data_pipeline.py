@@ -23,7 +23,7 @@ class DataPipeline:
         embedder (Embedder): Handles embedding chunks and building the FAISS index.
     """
 
-    def __init__(self, topic="machine learning", max_results=10):
+    def __init__(self, topic:str="machine learning", max_results:int=10):
         """
         Initialize the data pipeline with optional parameters.
 
@@ -40,7 +40,7 @@ class DataPipeline:
         self.chunker = SciBERTChunker()
         self.embedder = Embedder()
 
-    def run(self):
+    def run(self)->dict:
         """
         Execute the full data pipeline sequentially.
 

@@ -32,7 +32,7 @@ class MetricRunner:
             model=mdl,
             tokenizer=self.tok,
             device=self._hf_device,
-            max_new_tokens=256,
+            max_new_tokens=128,
             do_sample=False,
         )
         return HuggingFacePipeline(pipeline=gen)

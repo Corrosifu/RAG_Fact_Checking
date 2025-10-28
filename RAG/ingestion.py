@@ -21,7 +21,7 @@ class ArxivIngestor:
         max_results (int): Maximum number of articles to fetch from arXiv.
     """
 
-    def __init__(self, topic="machine learning", max_results=10):
+    def __init__(self, topic: str="machine learning" , max_results: int=10):
         """
         Initializes the ArxivIngestor with the specified base directory, topic, and max results.
         Creates the base directory if it doesn't exist.
@@ -31,7 +31,7 @@ class ArxivIngestor:
         self.max_results = max_results
         os.makedirs(self.base_dir, exist_ok=True)
 
-    def fetch_metadata(self):
+    def fetch_metadata(self)->list[dict]:
         """
         Fetches metadata for articles matching the topic from the arXiv API.
         
@@ -58,7 +58,7 @@ class ArxivIngestor:
         print(f"Fetched metadata for {len(articles)} articles on '{self.topic}'")
         return articles
 
-    def download_pdf(self, pdf_url, filepath):
+    def download_pdf(self, pdf_url:str, filepath:str):
         """
         Downloads a PDF from a given URL and saves it locally.
         
@@ -75,7 +75,7 @@ class ArxivIngestor:
             f.write(response.content)
         print(f"Downloaded {filepath}")
 
-    def download_all_pdfs(self, articles):
+    def download_all_pdfs(self, articles:list[dict]):
         """
         Downloads PDFs for all articles and saves the metadata as JSON.
         
@@ -96,7 +96,7 @@ class ArxivIngestor:
             json.dump(articles, f, ensure_ascii=False, indent=2)
         print(f"Saved metadata to {metadata_file}")
 
-    def load_existing_dataset(self):
+    def load_existing_dataset(self)->list[dict]:
         """
         Loads previously extracted content if it exists.
         
@@ -109,7 +109,7 @@ class ArxivIngestor:
                 return json.load(f)
         return []
 
-    def extract_text(self, pdf_path):
+    def extract_text(self, pdf_path:str)->str:
         """
         Extracts raw text from a PDF using pdfplumber.
         
@@ -126,7 +126,7 @@ class ArxivIngestor:
                 text += page_text + "\n"
         return text
 
-    def extract_md(self, pdf_path):
+    def extract_md(self, pdf_path:str)->str:
         """
         Converts a PDF to Markdown format using pymupdf4llm.
         
@@ -138,7 +138,7 @@ class ArxivIngestor:
         """
         return pymupdf4llm.to_markdown(pdf_path)
 
-    def extract_all_content(self, articles):
+    def extract_all_content(self, articles:list[dict])->list[dict]:
         """
         Extracts content from all PDFs, skipping already processed articles.
         
@@ -175,7 +175,7 @@ class ArxivIngestor:
 
         return dataset
 
-    def save_dataset(self, dataset, filename=None):
+    def save_dataset(self, dataset:list[dict], filename:str=None):
         """
         Saves the extracted dataset to a JSON file.
         
@@ -188,7 +188,7 @@ class ArxivIngestor:
             json.dump(dataset, f, ensure_ascii=False, indent=2)
         print(f"Dataset saved to {filename}")
 
-    def run(self):
+    def run(self)->list[dict]:
         """
         Full ingestion pipeline:
         1. Fetch metadata from arXiv

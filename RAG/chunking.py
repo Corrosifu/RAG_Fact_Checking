@@ -13,7 +13,7 @@ class SciBERTChunker:
         chunk_overlap (int): Number of overlapping tokens between consecutive chunks.
     """
 
-    def __init__(self, tokenizer_name="allenai/scibert_scivocab_uncased", chunk_size=1000, chunk_overlap=200):
+    def __init__(self, tokenizer_name:str="allenai/scibert_scivocab_uncased", chunk_size:int=1000, chunk_overlap:int=200):
         """
         Initializes the SciBERTChunker with a tokenizer, chunk size, and chunk overlap.
 
@@ -27,7 +27,7 @@ class SciBERTChunker:
         self.chunk_overlap = chunk_overlap
 
     @staticmethod
-    def load_articles(json_path):
+    def load_articles(json_path:str)->list[dict]:
         """
         Loads articles from a JSON file.
 
@@ -40,7 +40,7 @@ class SciBERTChunker:
         with open(json_path, "r", encoding="utf-8") as f:
             return json.load(f)
 
-    def chunk_text(self, text):
+    def chunk_text(self, text:str) -> list[str]: 
         """
         Splits a long text into token-based chunks with optional overlap.
 
@@ -65,7 +65,7 @@ class SciBERTChunker:
 
         return chunks
 
-    def chunk_articles(self, articles):
+    def chunk_articles(self, articles:list[dict])->list[dict]:
         """
         Chunks all articles into smaller segments and attaches metadata.
 
@@ -96,7 +96,7 @@ class SciBERTChunker:
         return chunked_dataset
 
     @staticmethod
-    def save_chunked_dataset(chunked_dataset, filename):
+    def save_chunked_dataset(chunked_dataset:list[dict], filename:str):
         """
         Saves the chunked dataset to a JSON file.
 

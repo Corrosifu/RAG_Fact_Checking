@@ -8,7 +8,7 @@ from RAG.chunking import SciBERTChunker
 from config import INDEX_DIR,CHUNKED_JSON,EXTRACTED_JSON
 # Configure PyTorch CUDA memory management
 os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "max_split_size_mb:32,expandable_segments:True"
-
+import numpy as np
 
 class Embedder:
     """
@@ -20,7 +20,7 @@ class Embedder:
         batch_size (int): Number of documents to embed at once.
     """
 
-    def __init__(self, model_name="Qwen/Qwen3-Embedding-0.6B", device=None, batch_size=1):
+    def __init__(self, model_name:str="Qwen/Qwen3-Embedding-0.6B", device:str=None, batch_size:int=1):
         """
         Initializes the Embedder with a HuggingFace embedding model.
 
@@ -37,7 +37,7 @@ class Embedder:
         )
         self.batch_size = batch_size
 
-    def embed_docs(self, chunked_dataset):
+    def embed_docs(self, chunked_dataset:list[dict])->tuple[list[Document],list[np.ndarray]]:
         """
         Converts text chunks into embeddings and wraps them as Document objects.
 
@@ -65,14 +65,13 @@ class Embedder:
 
         return docs, embeddings
 
-    def build_faiss_index(self, docs, embeddings):
+    def build_faiss_index(self, docs:list[Document], embeddings:list[np.ndarray])->FAISS:
         """
         Builds a FAISS vector store from document embeddings and saves it locally.
 
         Args:
             docs (List[Document]): List of Document objects.
             embeddings (List[np.ndarray]): Corresponding embeddings.
-            index_path (str, optional): Path to save the FAISS index.
 
         Returns:
             FAISS: Built FAISS vector store.
@@ -92,13 +91,9 @@ class Embedder:
         faiss_db.save_local(INDEX_DIR)
         return faiss_db
 
-    def run(self):
+    def run(self)->FAISS:
         """
         Complete pipeline to load a chunked dataset, embed all documents, and build a FAISS index.
-
-        Args:
-            chunked_dataset_path (str, optional): Path to the JSON file containing chunked dataset.
-            index_path (str, optional): Path to save the FAISS index.
 
         Returns:
             FAISS: Built FAISS vector store.

@@ -9,7 +9,7 @@ class RAG :
 
         self.retriever=Retrieval()
         self.generator=Generator() 
-    def ask(self, query, max_tokens=256):
+    def ask(self, query:str, max_tokens:int=256)->str:
 
         context = self.retriever.retrieve(query)
         return self.generator.generate(query, context, max_tokens=max_tokens)
