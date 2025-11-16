@@ -196,6 +196,13 @@ print(response)
 > For instance, 32‑bit floats can be approximated with 8‑bit integers, saving memory and computation.  
 > This trade‑off slightly affects accuracy but is essential for edge deployment.
 
+<p align="center">
+  <img src="img/streamlitui"
+       alt="UI"
+       width="900">
+  <br>
+  <em>Figure — Example of an output </em>
+</p>
 ---
 
 ## 📉 7. Limitations
