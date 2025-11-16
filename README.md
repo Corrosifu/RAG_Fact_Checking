@@ -83,7 +83,7 @@ arXiv → PDF ingestion → Markdown extraction → SciBERT chunking
        alt="RAG Fact-Checking Architecture"
        width="900">
   <br>
-  <em>Figure — End-to-end RAG pipeline from arXiv ingestion to retrieval and generation.</em>
+  <em>Figure 1 — End-to-end RAG pipeline from arXiv ingestion to retrieval and generation.</em>
 </p>
 
 
@@ -201,7 +201,7 @@ print(response)
        alt="UI"
        width="900">
   <br>
-  <em>Figure — Example of an output </em>
+  <em>Figure 2 — Example of an output </em>
 </p>
 ---
 
