@@ -197,7 +197,7 @@ print(response)
 > This trade‑off slightly affects accuracy but is essential for edge deployment.
 
 <p align="center">
-  <img src="img/streamlitui"
+  <img src="img/streamlitui.png"
        alt="UI"
        width="900">
   <br>
