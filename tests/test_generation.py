@@ -56,3 +56,22 @@ def test_extractive_drops_weakly_related_sentences(retriever):
     out = ExtractiveGenerator().generate("How does quantization reduce model size?", hits)
     assert "uantization" in out
     assert "Retrieval-augmented" not in out and "overfitting" not in out
+
+
+def test_extractive_skips_titles_markup_and_duplicates():
+    h1 = Hit(
+        Chunk(
+            "d#0",
+            "d",
+            0,
+            "Gaussian Splats Explained. ## GAUSSIAN SPLATS EXPLAINED "
+            "Gaussian splats represent a scene as many small **3D blobs** [3, 4] rendered quickly.",
+            "Gaussian Splats Explained",
+        ),
+        1.0,
+    )
+    h2 = Hit(Chunk("d#1", "d", 1, h1.chunk.text, "Gaussian Splats Explained"), 0.9)  # overlap copy
+    out = ExtractiveGenerator().generate("What are gaussian splats?", [h1, h2])
+    assert out.count("many small 3D blobs") == 1
+    assert "##" not in out and "**" not in out and "[3, 4]" not in out
+    assert "Explained." not in out

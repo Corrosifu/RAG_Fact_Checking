@@ -46,3 +46,16 @@ def test_index_without_corpus(capsys):
 def test_command_required():
     with pytest.raises(SystemExit):
         main([])
+
+
+def test_network_failure_is_reported_without_traceback(monkeypatch, capsys):
+    import requests
+
+    from rag_fact_checking import ingestion
+
+    def boom(*a, **k):
+        raise requests.ConnectionError("proxy refused")
+
+    monkeypatch.setattr(ingestion.requests, "get", boom)
+    assert main(["ingest", "--max-results", "2"]) == 1
+    assert "proxy refused" in capsys.readouterr().err
