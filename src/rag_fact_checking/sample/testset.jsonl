@@ -1,0 +1,6 @@
+{"query": "How does quantization shrink a neural network?", "relevant_doc_ids": ["quantization"]}
+{"query": "What does the learning rate do in gradient descent?", "relevant_doc_ids": ["gradient-descent"]}
+{"query": "Why are transformers easy to parallelize?", "relevant_doc_ids": ["attention"]}
+{"query": "How does hybrid retrieval combine dense and sparse search?", "relevant_doc_ids": ["rag", "bm25"]}
+{"query": "What is early stopping used for?", "relevant_doc_ids": ["overfitting"]}
+{"query": "How can I fine-tune an LLM on one consumer GPU?", "relevant_doc_ids": ["lora"]}

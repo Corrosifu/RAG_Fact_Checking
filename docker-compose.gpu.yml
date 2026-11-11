@@ -1,0 +1,16 @@
+# Override: neural embeddings + LLM generation, optionally on an NVIDIA GPU.
+services:
+  backend:
+    build:
+      args:
+        EXTRAS: api,ml
+    environment:
+      RAGFC_EMBEDDER: sentence-transformers
+      RAGFC_GENERATOR: hf
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]

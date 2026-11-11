@@ -1,50 +1,30 @@
-#Docker compose for deployment on prem
-
-version: "3.9"
-
+# Local / on-prem deployment. CPU-only by default.
+#   docker compose run --rm backend ragfc sample && docker compose run --rm backend ragfc index
+#   docker compose up --build
+# GPU / neural models: docker compose -f docker-compose.yml -f docker-compose.gpu.yml up --build
 services:
   backend:
     build:
       context: .
-      dockerfile: API/Dockerfile
-    ports:
-      - "8000:8000"
+      dockerfile: docker/api.Dockerfile
+    env_file: [{ path: .env, required: false }]
     environment:
-     
-      - HF_TOKEN=${HF_TOKEN}
-      
-      - HF_CACHE=/hf_cache
-      - HUGGINGFACE_HUB_CACHE=/hf_cache
+      HF_HOME: /hf_cache
+    ports: ["8000:8000"]
     volumes:
+      - ./data:/app/data
       - hf_cache:/hf_cache
     restart: unless-stopped
-    networks:
-      - rag_network
-
-    gpus: all
 
   frontend:
     build:
       context: .
-      dockerfile: UI/Dockerfile
-    ports:
-      - "8501:8501"
+      dockerfile: docker/ui.Dockerfile
     environment:
-      
-      - BACKEND_URL=http://backend:8000
-    depends_on:
-      - backend
+      BACKEND_URL: http://backend:8000
+    ports: ["8501:8501"]
+    depends_on: [backend]
     restart: unless-stopped
-    networks:
-      - rag_network
 
 volumes:
   hf_cache:
-
-networks:
-  rag_network:
-    driver: bridge
-
-
-
-
