@@ -58,7 +58,7 @@ arXiv → documents (JSONL) → word-window chunks → embeddings ─┐
 | Embeddings | `hashing` – feature hashing of word uni/bi-grams, deterministic, no download | `sentence-transformers` (`all-MiniLM-L6-v2`, ~90 MB) |
 | Retrieval | exact cosine (numpy) + BM25, fused with **Reciprocal Rank Fusion** | + cross-encoder reranker (`RAGFC_RERANKER=cross-encoder`) |
 | Generation | `extractive` – selects and cites the best evidence sentences | `hf` – small instruct LLM, CPU or GPU (`Qwen2.5-0.5B-Instruct` by default; Llama-3.2-1B works with `HF_TOKEN`) |
-| Fact-check | disabled (returns HTTP 501) | `nli` – entailment/contradiction over retrieved passages → `SUPPORTED` / `REFUTED` / `NOT_ENOUGH_INFO` |
+| Fact-check | disabled (returns HTTP 501) | `nli` – entailment/contradiction over short evidence windows (a few sentences) selected from the retrieved passages → `SUPPORTED` / `REFUTED` / `NOT_ENOUGH_INFO` |
 
 Everything is selected with environment variables (see [`.env.example`](.env.example)):
 
@@ -129,7 +129,11 @@ experimental, not covered by CI).
 - The flat numpy index is exact and simple, sized for up to tens of thousands of chunks
   (~8 KB/chunk at 2048 dims); beyond that, switch to an ANN index.
 - Verdicts come from a small NLI model over retrieved passages: treat them as decision support,
-  not ground truth.
+  not ground truth. Conflicting evidence (strong support *and* strong contradiction) yields
+  `NOT_ENOUGH_INFO` rather than a guess. Checked by hand on 7 claims over 10 papers: no
+  confidently wrong verdict, 2 conservative `NOT_ENOUGH_INFO` — a sanity check, not a benchmark.
+- Tiny generators (`Qwen2.5-0.5B`) write fluent but sometimes **ungrounded** answers: always read
+  the cited sources, and use the fact-checker on claims you care about.
 
 ## Migrating from v0.1
 
