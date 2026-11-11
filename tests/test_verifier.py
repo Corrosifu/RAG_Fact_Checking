@@ -1,8 +1,13 @@
 import pytest
 
 from rag_fact_checking.config import Settings
-from rag_fact_checking.schemas import Chunk, Hit, Verdict
-from rag_fact_checking.verifier import aggregate_verdict, build_verifier, select_premises
+from rag_fact_checking.schemas import Chunk, Hit, Premise, Verdict
+from rag_fact_checking.verifier import (
+    aggregate_verdict,
+    build_verifier,
+    select_premises,
+    to_evidence_sentences,
+)
 
 
 def p(e=0.0, c=0.0, n=0.0):
@@ -53,7 +58,7 @@ def test_select_premises_keeps_only_sentences_about_the_claim():
         "Bananas are yellow fruits that grow in tropical climates around the world."
     )
     prem = select_premises("The Kaczmarz method solves linear systems.", [h], window_words=15)
-    assert len(prem) == 1 and "Kaczmarz" in prem[0] and "Bananas" not in prem[0]
+    assert len(prem) == 1 and "Kaczmarz" in prem[0].text and "Bananas" not in prem[0].text
 
 
 def test_unrelated_hits_give_no_premises():
@@ -65,7 +70,7 @@ def test_premises_are_short_clean_and_deduplicated():
     sentence = "The learning rate controls the step size taken during gradient descent."
     h1, h2 = hit(f"## {sentence} [3, 4]"), hit(sentence)  # overlapping chunk copy
     prem = select_premises("What does the learning rate control in gradient descent?", [h1, h2])
-    assert len(prem) == 1 and "[3" not in prem[0] and "##" not in prem[0]
+    assert len(prem) == 1 and "[3" not in prem[0].text and "##" not in prem[0].text
 
 
 def test_premises_respect_window_and_max():
@@ -75,7 +80,7 @@ def test_premises_respect_window_and_max():
     prem = select_premises(
         "gradient descent learning rate", [hit(text)], max_premises=3, window_words=25
     )
-    assert len(prem) == 3 and all(len(x.split()) <= 25 + 12 for x in prem)
+    assert len(prem) == 3 and all(len(x.text.split()) <= 25 + 12 for x in prem)
 
 
 def test_empty_claim_terms_give_no_premises():
@@ -93,3 +98,27 @@ def test_short_titles_do_not_erase_words_from_evidence():
         "Where Have All the Iterates Gone? Body text.", "Where Have All the Iterates Gone?"
     )
     assert "Where" not in long and "Body text." in long
+
+
+def test_premises_keep_their_origin():
+    h = Hit(Chunk("paper#3", "paper", 3, "Kaczmarz solves large linear systems iteratively."), 1.0)
+    prem = select_premises("Kaczmarz solves linear systems.", [h])
+    assert (prem[0].doc_id, prem[0].chunk_id) == ("paper", "paper#3")
+
+
+def test_evidence_sentences_are_labelled_and_sorted():
+    prems = [Premise(f"s{i}", "d", "T", f"d#{i}") for i in range(4)]
+    probs = [
+        p(n=0.9, e=0.05, c=0.05),  # neutral
+        p(c=0.9),  # contradicts
+        p(e=0.7, n=0.3),  # supports
+        p(e=0.4, c=0.3, n=0.3),  # weak -> neutral
+    ]
+    out = to_evidence_sentences(prems, probs)
+    assert [(e.text, e.stance) for e in out] == [
+        ("s1", "contradicts"),
+        ("s2", "supports"),
+        ("s3", "neutral"),
+        ("s0", "neutral"),
+    ]
+    assert out[0].contradiction == 0.9 and out[0].chunk_id == "d#1"

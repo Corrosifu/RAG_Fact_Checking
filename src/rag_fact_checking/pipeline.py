@@ -7,7 +7,13 @@ from rag_fact_checking.embeddings import build_embedder
 from rag_fact_checking.generation import Generator, build_generator
 from rag_fact_checking.retriever import HybridRetriever
 from rag_fact_checking.schemas import Answer, FactCheckResult, Hit, Source
-from rag_fact_checking.verifier import Verifier, aggregate_verdict, build_verifier
+from rag_fact_checking.verifier import (
+    Verifier,
+    aggregate_verdict,
+    build_verifier,
+    select_premises,
+    to_evidence_sentences,
+)
 
 
 class VerifierNotConfigured(RuntimeError):
@@ -61,7 +67,13 @@ class RAGPipeline:
                 "(requires the 'ml' extra)."
             )
         hits = self.retriever.retrieve(claim, top_k or self.top_k)
-        verdict, confidence = aggregate_verdict(
-            self.verifier.entailment_probs(claim, hits), self.nli_threshold
+        premises = select_premises(claim, hits)
+        probs = self.verifier.entailment_probs(claim, premises) if premises else []
+        verdict, confidence = aggregate_verdict(probs, self.nli_threshold)
+        return FactCheckResult(
+            claim,
+            verdict,
+            round(confidence, 4),
+            [to_source(h) for h in hits],
+            to_evidence_sentences(premises, probs, self.nli_threshold),
         )
-        return FactCheckResult(claim, verdict, round(confidence, 4), [to_source(h) for h in hits])

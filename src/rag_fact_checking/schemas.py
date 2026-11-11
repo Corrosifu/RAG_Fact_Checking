@@ -59,6 +59,30 @@ class Answer:
         return asdict(self)
 
 
+@dataclass(frozen=True)
+class Premise:
+    """A short evidence window (a few sentences) extracted from a retrieved chunk."""
+
+    text: str
+    doc_id: str
+    title: str
+    chunk_id: str
+
+
+@dataclass(frozen=True)
+class EvidenceSentence:
+    """A premise with the NLI probabilities it received against the claim."""
+
+    text: str
+    doc_id: str
+    title: str
+    chunk_id: str
+    entailment: float
+    contradiction: float
+    neutral: float
+    stance: str  # "supports" | "contradicts" | "neutral"
+
+
 class Verdict(str, Enum):
     SUPPORTED = "SUPPORTED"
     REFUTED = "REFUTED"
@@ -71,6 +95,7 @@ class FactCheckResult:
     verdict: Verdict
     confidence: float
     evidence: list[Source]
+    evidence_sentences: list[EvidenceSentence] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
         out = asdict(self)

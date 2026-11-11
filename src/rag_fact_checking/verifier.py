@@ -10,7 +10,7 @@ from collections.abc import Mapping, Sequence
 from typing import Protocol
 
 from rag_fact_checking.config import Settings
-from rag_fact_checking.schemas import Hit, Verdict
+from rag_fact_checking.schemas import EvidenceSentence, Hit, Premise, Verdict
 from rag_fact_checking.textutils import (
     clean_text,
     content_terms,
@@ -23,7 +23,7 @@ Probs = Mapping[str, float]  # keys: "entailment", "contradiction", "neutral"
 
 
 class Verifier(Protocol):
-    def entailment_probs(self, claim: str, hits: Sequence[Hit]) -> list[Probs]: ...
+    def entailment_probs(self, claim: str, premises: Sequence[Premise]) -> list[Probs]: ...
 
 
 def select_premises(
@@ -32,7 +32,7 @@ def select_premises(
     max_premises: int = 8,
     window_words: int = 60,
     min_overlap: int = 2,
-) -> list[str]:
+) -> list[Premise]:
     """Pick short evidence windows (a few sentences) that actually talk about the claim.
 
     NLI models are trained on short premises: feeding a whole 200-word PDF chunk (with
@@ -44,7 +44,7 @@ def select_premises(
     need = min(min_overlap, len(claim_terms))
     if need == 0:
         return []
-    scored: list[tuple[int, int, int, str]] = []
+    scored: list[tuple[int, int, int, Premise]] = []
     seen: set[str] = set()
     for h_idx, hit in enumerate(hits):
         text = strip_title(clean_text(hit.chunk.text), hit.chunk.title)
@@ -58,7 +58,8 @@ def select_premises(
                 overlap = len(claim_terms & content_terms(premise))
                 if overlap >= need and premise.lower() not in seen:
                     seen.add(premise.lower())
-                    scored.append((overlap, -h_idx, -len(scored), premise))
+                    origin = Premise(premise, hit.chunk.doc_id, hit.chunk.title, hit.chunk.id)
+                    scored.append((overlap, -h_idx, -len(scored), origin))
                 window = []
             if sent:
                 window.append(sent)
@@ -110,13 +111,12 @@ class NLIVerifier:
         self._labels = [str(v).lower() for _, v in sorted(self.model.config.id2label.items())]
 
     def entailment_probs(  # pragma: no cover - needs model
-        self, claim: str, hits: Sequence[Hit]
+        self, claim: str, premises: Sequence[Premise]
     ) -> list[Probs]:
-        premises = select_premises(claim, hits)
         if not premises:
             return []
         enc = self.tokenizer(
-            premises,
+            [p.text for p in premises],
             [claim] * len(premises),
             truncation="only_first",
             max_length=512,
@@ -126,6 +126,37 @@ class NLIVerifier:
         with self._torch.no_grad():
             probs = self._torch.softmax(self.model(**enc).logits, dim=-1).tolist()
         return [dict(zip(self._labels, row, strict=True)) for row in probs]
+
+
+def to_evidence_sentences(
+    premises: Sequence[Premise], probs: Sequence[Probs], threshold: float = 0.6
+) -> list[EvidenceSentence]:
+    """Attach NLI probabilities to premises, strongest signal first.
+
+    A sentence "supports" (or "contradicts") only when its own probability clears the
+    threshold; everything else is "neutral" and sorted last.
+    """
+    out = []
+    for prem, pr in zip(premises, probs, strict=True):
+        ent, con, neu = (pr.get(k, 0.0) for k in ("entailment", "contradiction", "neutral"))
+        stance = "neutral"
+        if ent >= threshold and ent >= con:
+            stance = "supports"
+        elif con >= threshold:
+            stance = "contradicts"
+        out.append(
+            EvidenceSentence(
+                prem.text,
+                prem.doc_id,
+                prem.title,
+                prem.chunk_id,
+                round(ent, 4),
+                round(con, 4),
+                round(neu, 4),
+                stance,
+            )
+        )
+    return sorted(out, key=lambda e: (e.stance == "neutral", -max(e.entailment, e.contradiction)))
 
 
 def build_verifier(settings: Settings) -> Verifier | None:
