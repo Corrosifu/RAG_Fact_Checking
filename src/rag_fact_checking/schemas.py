@@ -51,15 +51,6 @@ class Source:
 
 
 @dataclass(frozen=True)
-class Answer:
-    text: str
-    sources: list[Source]
-
-    def to_dict(self) -> dict[str, Any]:
-        return asdict(self)
-
-
-@dataclass(frozen=True)
 class Premise:
     """A short evidence window (a few sentences) extracted from a retrieved chunk."""
 
@@ -81,6 +72,26 @@ class EvidenceSentence:
     contradiction: float
     neutral: float
     stance: str  # "supports" | "contradicts" | "neutral"
+
+
+@dataclass(frozen=True)
+class SentenceCheck:
+    """Verification of one sentence of a generated answer against the retrieved evidence."""
+
+    sentence: str
+    status: str  # "supported" | "contradicted" | "unsupported"
+    confidence: float
+    evidence: EvidenceSentence | None = None  # strongest sentence behind the status
+
+
+@dataclass(frozen=True)
+class Answer:
+    text: str
+    sources: list[Source]
+    checks: list[SentenceCheck] = field(default_factory=list)  # empty = not verified
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
 
 
 class Verdict(str, Enum):

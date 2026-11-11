@@ -46,3 +46,11 @@ def test_invalid_values_rejected(kwargs):
 
 def test_token_not_in_repr():
     assert "secret" not in repr(Settings(hf_token="secret"))
+
+
+def test_verify_answers_flag():
+    assert Settings().verify_answers is True
+    assert Settings.from_env({"RAGFC_VERIFY_ANSWERS": "false"}).verify_answers is False
+    assert Settings.from_env({"RAGFC_VERIFY_ANSWERS": "1"}).verify_answers is True
+    with pytest.raises(ValueError, match="RAGFC_VERIFY_ANSWERS"):
+        Settings.from_env({"RAGFC_VERIFY_ANSWERS": "sometimes"})
