@@ -36,6 +36,29 @@ def _stem(token: str) -> str:
     )
 
 
+_MARKUP_RE = re.compile(r"[#*_`>|]+|\[\d+(?:[,\s-]+\d+)*\]")
+
+
+def _clean_sentence(sentence: str) -> str:
+    """Drop markdown markup and bare citation markers like [11] from extracted PDF text."""
+    return " ".join(_MARKUP_RE.sub(" ", sentence).split())
+
+
+def _strip_title(text: str, title: str) -> str:
+    """Remove the (whitespace-normalised) document title, which PDFs repeat as page headers."""
+    title = " ".join(title.split())
+    return re.sub(re.escape(title), " ", text, flags=re.IGNORECASE) if title else text
+
+
+def _usable(sentence: str) -> bool:
+    """Keep prose-like sentences: not shouting caps, not a fragment."""
+    words = sentence.split()
+    letters = [c for c in sentence if c.isalpha()]
+    if len(words) < 5 or len(sentence) > 500 or not letters:
+        return False
+    return sum(c.isupper() for c in letters) / len(letters) <= 0.5
+
+
 def _terms(text: str) -> set[str]:
     return {_stem(t) for t in tokenize(text) if t not in STOPWORDS}
 
@@ -72,17 +95,24 @@ class ExtractiveGenerator:
     def generate(self, query: str, hits: Sequence[Hit], max_new_tokens: int = 256) -> str:
         q_terms = _terms(query)
         candidates: list[tuple[int, int, str, set[str]]] = []
+        seen: set[str] = set()
         for h_idx, hit in enumerate(hits):
-            for s_idx, sent in enumerate(_SENTENCE_RE.split(" ".join(hit.chunk.text.split()))):
+            for s_idx, sent in enumerate(
+                _SENTENCE_RE.split(_strip_title(_clean_sentence(hit.chunk.text), hit.chunk.title))
+            ):
                 terms = _terms(sent)
-                if len(sent) > 20 and q_terms & terms:
-                    candidates.append((h_idx, s_idx, sent, terms))
+                key = sent.lower()
+                # overlapping chunks repeat sentences: keep the best-ranked occurrence only
+                if key in seen or not _usable(sent) or not q_terms & terms:
+                    continue
+                seen.add(key)
+                candidates.append((h_idx, s_idx, sent, terms))
         if not candidates:
             return NO_EVIDENCE
 
         # Rare query terms (e.g. "quantization") matter more than common ones ("model").
         n = len(candidates)
-        idf = {t: math.log(1 + n / sum(t in c[3] for c in candidates)) for t in q_terms}
+        idf = {t: math.log(1 + n / max(1, sum(t in c[3] for c in candidates))) for t in q_terms}
         scored = [
             (
                 sum(idf[t] for t in q_terms & terms) / math.sqrt(len(terms)),

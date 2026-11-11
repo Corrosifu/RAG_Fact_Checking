@@ -131,7 +131,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     try:
         return args.func(args, Settings.from_env())
-    except (FileNotFoundError, ValueError, RuntimeError, ImportError) as exc:
+    except (FileNotFoundError, ValueError, RuntimeError, ImportError, OSError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 1
 
