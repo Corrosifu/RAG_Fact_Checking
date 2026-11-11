@@ -23,6 +23,17 @@ def _env_int(env: Mapping[str, str], key: str, default: int) -> int:
         raise ValueError(f"{key} must be an integer, got {raw!r}") from exc
 
 
+def _env_bool(env: Mapping[str, str], key: str, default: bool) -> bool:
+    raw = env.get(key)
+    if raw in (None, ""):
+        return default
+    if raw.strip().lower() in {"1", "true", "yes", "on"}:
+        return True
+    if raw.strip().lower() in {"0", "false", "no", "off"}:
+        return False
+    raise ValueError(f"{key} must be a boolean (true/false), got {raw!r}")
+
+
 @dataclass(frozen=True)
 class Settings:
     """Immutable settings object. Build it with :meth:`from_env` or pass kwargs."""
@@ -50,6 +61,8 @@ class Settings:
     # Fact-checking.
     verifier: str = "none"  # "none" | "nli"
     verifier_model: str = "cross-encoder/nli-MiniLM2-L6-H768"
+    # Check every sentence of a generated answer against the sources (needs a verifier).
+    verify_answers: bool = True
 
     hf_token: str | None = field(default=None, repr=False)
 
@@ -97,5 +110,6 @@ class Settings:
             max_context_chars=_env_int(env, "RAGFC_MAX_CONTEXT_CHARS", d.max_context_chars),
             verifier=get("VERIFIER", d.verifier),
             verifier_model=get("VERIFIER_MODEL", d.verifier_model),
+            verify_answers=_env_bool(env, "RAGFC_VERIFY_ANSWERS", d.verify_answers),
             hf_token=env.get("HF_TOKEN") or None,
         )

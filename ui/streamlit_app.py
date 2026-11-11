@@ -26,6 +26,43 @@ def show_sources(sources: list[dict], label: str = "Sources") -> None:
             st.write(s["snippet"])
 
 
+CHECK_STYLE = {
+    "supported": ("✅", "green", "Supported by the sources"),
+    "contradicted": ("❌", "red", "Contradicted by the sources"),
+    "unsupported": ("⚠️", "orange", "Not confirmed by the sources"),
+}
+
+
+def show_answer(data: dict) -> None:
+    """The generated answer, sentence by sentence, with its verification status."""
+    checks = data.get("checks") or []
+    if not checks:
+        st.markdown(data["text"])
+        return
+    n_ok = sum(c["status"] == "supported" for c in checks)
+    flagged = len(checks) - n_ok
+    summary = f"**{n_ok}/{len(checks)} sentences confirmed by the sources**"
+    st.markdown(summary + (f" · :orange[{flagged} to double-check]" if flagged else ""))
+    for c in checks:
+        icon, color, label = CHECK_STYLE[c["status"]]
+        st.markdown(f"{icon} :{color}[{c['sentence']}]")
+    with st.expander("Why? Strongest evidence for each sentence"):
+        for c in checks:
+            icon, _, label = CHECK_STYLE[c["status"]]
+            st.markdown(f"{icon} **{c['sentence']}**  \n_{label} ({c['confidence']:.0%})_")
+            ev = c["evidence"]
+            if ev:
+                st.markdown(f"> {ev['text']}")
+                st.caption(
+                    f"{ev['title'] or ev['doc_id']} · `{ev['chunk_id']}` · "
+                    f"entailment {ev['entailment']:.0%} · contradiction {ev['contradiction']:.0%}"
+                )
+            else:
+                st.caption("No sentence in the retrieved passages is related to this statement.")
+    with st.expander("Raw answer"):
+        st.markdown(data["text"])
+
+
 def show_sentence(s: dict) -> None:
     icon, color, label = STANCE_STYLE[s["stance"]]
     st.markdown(f"{icon} :{color}[**{label}**] · {s['title'] or s['doc_id']} · `{s['chunk_id']}`")
@@ -60,7 +97,7 @@ with tab_ask:
         try:
             with st.spinner("Searching…"):
                 data = post("/query", {"query": question})
-            st.markdown(data["text"])
+            show_answer(data)
             show_sources(data["sources"])
         except BackendError as exc:
             st.error(str(exc))

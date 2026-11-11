@@ -47,6 +47,12 @@ def cmd_ask(args: argparse.Namespace, settings: Settings) -> int:
 
     answer = RAGPipeline.from_settings(settings).ask(args.question, args.top_k)
     print(answer.text)
+    if answer.checks:
+        marks = {"supported": "✓", "contradicted": "✗", "unsupported": "?"}
+        n_ok = sum(c.status == "supported" for c in answer.checks)
+        print(f"\nVerification: {n_ok}/{len(answer.checks)} sentences supported by the sources")
+        for check in answer.checks:
+            print(f"  {marks[check.status]} {check.sentence}")
     print("\nSources:")
     for i, s in enumerate(answer.sources, start=1):
         print(f"  [{i}] {s.title or s.doc_id} ({s.chunk_id}, score={s.score})")

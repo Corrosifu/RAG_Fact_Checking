@@ -61,3 +61,17 @@ def test_pipeline_built_once(pipeline):
     c.post("/query", json={"query": "a b"})
     c.post("/query", json={"query": "c d"})
     assert len(calls) == 1
+
+
+def test_query_returns_sentence_checks_and_honours_verify_flag(retriever):
+    from rag_fact_checking.pipeline import RAGPipeline
+    from stubs import StubVerifier
+    from test_pipeline import ANSWER, FixedGenerator
+
+    pipe = RAGPipeline(retriever, FixedGenerator(ANSWER), verifier=StubVerifier())
+    c = TestClient(create_app(lambda: pipe))
+    body = c.post("/query", json={"query": "What does quantization do?"}).json()
+    assert body["checks"][0]["status"] == "supported" and body["checks"][0]["sentence"]
+    off = c.post("/query", json={"query": "What does quantization do?", "verify": False}).json()
+    assert off["checks"] == []
+    assert c.post("/query", json={"query": "x y", "verify": "maybe"}).status_code == 422

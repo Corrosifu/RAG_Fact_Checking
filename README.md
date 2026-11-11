@@ -68,6 +68,19 @@ source and NLI probabilities:
   </tr>
 </table>
 
+**Answer verification** — with the NLI verifier enabled, every sentence of a generated answer is
+checked against the retrieved sources. Left: a faithful answer (2/2 confirmed, with the supporting
+evidence). Right: an answer from a 0.5B model where 5 of 6 sentences are flagged to double-check.
+
+<table>
+  <tr>
+    <td align="center"><b>Faithful answer</b><br>
+      <img src="img/ui-verify-confirmed.png" alt="All answer sentences confirmed, with evidence" width="450"></td>
+    <td align="center"><b>Partly invented answer</b><br>
+      <img src="img/ui-verify-flagged.png" alt="Most answer sentences flagged as not confirmed" width="450"></td>
+  </tr>
+</table>
+
 > Small local models can still write fluent but ungrounded answers — always check the cited
 > sources, and use the fact-checker for claims that matter (see [Limitations](#limitations)).
 
@@ -84,6 +97,7 @@ arXiv → documents (JSONL) → word-window chunks → embeddings ─┐
 | Embeddings | `hashing` – feature hashing of word uni/bi-grams, deterministic, no download | `sentence-transformers` (`all-MiniLM-L6-v2`, ~90 MB) |
 | Retrieval | exact cosine (numpy) + BM25, fused with **Reciprocal Rank Fusion** | + cross-encoder reranker (`RAGFC_RERANKER=cross-encoder`) |
 | Generation | `extractive` – selects and cites the best evidence sentences | `hf` – small instruct LLM, CPU or GPU (`Qwen2.5-0.5B-Instruct` by default; Llama-3.2-1B works with `HF_TOKEN`) |
+| Answer check | off without a verifier | `nli` – each sentence of the generated answer is checked against the sources (`RAGFC_VERIFY_ANSWERS=false` to disable) → ✅ supported / ❌ contradicted / ⚠️ not confirmed |
 | Fact-check | disabled (returns HTTP 501) | `nli` – entailment/contradiction over short evidence windows (a few sentences) selected from the retrieved passages → `SUPPORTED` / `REFUTED` / `NOT_ENOUGH_INFO` |
 
 Everything is selected with environment variables (see [`.env.example`](.env.example)):
@@ -100,7 +114,7 @@ RAGFC_EMBEDDER=sentence-transformers RAGFC_GENERATOR=hf RAGFC_VERIFIER=nli ragfc
 | Endpoint | Body | Returns |
 |---|---|---|
 | `GET /health` | – | `{"status": "ok"}` |
-| `POST /query` | `{"query": "...", "top_k": 5}` | `{"text": "...", "sources": [{doc_id, title, chunk_id, score, snippet}]}` |
+| `POST /query` | `{"query": "...", "top_k": 5, "verify": true}` | `{"text": "...", "sources": [...], "checks": [{sentence, status, confidence, evidence}]}` (`checks` is empty without a verifier) |
 | `POST /fact-check` | `{"claim": "...", "top_k": 5}` | `{"verdict", "confidence", "evidence": [...]}` (needs `RAGFC_VERIFIER=nli`) |
 
 Errors are real HTTP codes: `422` invalid input, `503` index not built, `501` verifier not configured.
@@ -158,6 +172,10 @@ experimental, not covered by CI).
   not ground truth. Conflicting evidence (strong support *and* strong contradiction) yields
   `NOT_ENOUGH_INFO` rather than a guess. Checked by hand on 7 claims over 10 papers: no
   confidently wrong verdict, 2 conservative `NOT_ENOUGH_INFO` — a sanity check, not a benchmark.
+- Answer verification is a **filter, not a guarantee**: on a handful of cases it flagged the invented
+  sentences of a 0.5B model and confirmed a faithful answer, but it can miss an invented clause
+  inside an otherwise supported sentence, and flag faithful sentences that combine facts spread
+  over several source sentences. Read "not confirmed" as "double-check this".
 - Tiny generators (`Qwen2.5-0.5B`) write fluent but sometimes **ungrounded** answers: always read
   the cited sources, and use the fact-checker on claims you care about.
 

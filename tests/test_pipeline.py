@@ -42,3 +42,55 @@ def test_from_settings_end_to_end(settings, sample_corpus):
     build_index(settings)
     ans = RAGPipeline.from_settings(settings).ask("What is LoRA fine-tuning?")
     assert ans.sources[0].doc_id == "lora"
+
+
+class FixedGenerator:
+    def __init__(self, text):
+        self.text = text
+
+    def generate(self, query, hits, max_new_tokens=256):
+        return self.text
+
+
+ANSWER = "Quantization reduces the memory footprint of neural networks using fewer bits."
+
+
+def test_ask_verifies_each_sentence_when_verifier_configured(retriever):
+    from stubs import StubVerifier
+
+    p = RAGPipeline(retriever, FixedGenerator(ANSWER), verifier=StubVerifier(), top_k=3)
+    ans = p.ask("What does quantization do?")
+    assert [c.status for c in ans.checks] == ["supported"]
+    assert ans.to_dict()["checks"][0]["evidence"]["doc_id"] == "quantization"
+
+
+def test_verification_can_be_disabled_per_call_or_globally(retriever):
+    from stubs import StubVerifier
+
+    p = RAGPipeline(retriever, FixedGenerator(ANSWER), verifier=StubVerifier())
+    assert p.ask("What does quantization do?", verify=False).checks == []
+    assert (
+        RAGPipeline(
+            retriever, FixedGenerator(ANSWER), verifier=StubVerifier(), verify_answers=False
+        )
+        .ask("What does quantization do?")
+        .checks
+        == []
+    )
+    # per-call override wins over the global default
+    assert (
+        RAGPipeline(
+            retriever, FixedGenerator(ANSWER), verifier=StubVerifier(), verify_answers=False
+        )
+        .ask("What does quantization do?", verify=True)
+        .checks
+    )
+
+
+def test_no_verification_without_verifier_or_for_the_no_evidence_fallback(retriever):
+    from rag_fact_checking.generation import NO_EVIDENCE
+    from stubs import StubVerifier
+
+    assert RAGPipeline(retriever, FixedGenerator(ANSWER)).ask("quantization?").checks == []
+    p = RAGPipeline(retriever, FixedGenerator(NO_EVIDENCE), verifier=StubVerifier())
+    assert p.ask("quantization?").checks == []

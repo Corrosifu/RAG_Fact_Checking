@@ -16,6 +16,10 @@ from rag_fact_checking.pipeline import RAGPipeline, VerifierNotConfigured
 class QueryRequest(BaseModel):
     query: str = Field(min_length=1, max_length=2000)
     top_k: int | None = Field(default=None, ge=1, le=20)
+    verify: bool | None = Field(
+        default=None,
+        description="Check each answer sentence against the sources (needs a verifier).",
+    )
 
 
 class ClaimRequest(BaseModel):
@@ -44,7 +48,7 @@ def create_app(pipeline_factory: Callable[[], RAGPipeline] = RAGPipeline.from_se
 
     @app.post("/query")
     def query(req: QueryRequest) -> dict:
-        return get_pipeline().ask(req.query, req.top_k).to_dict()
+        return get_pipeline().ask(req.query, req.top_k, req.verify).to_dict()
 
     @app.post("/fact-check")
     def fact_check(req: ClaimRequest) -> dict:
