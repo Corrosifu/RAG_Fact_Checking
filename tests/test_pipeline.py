@@ -22,13 +22,18 @@ def test_fact_check_requires_verifier(pipeline):
 
 def test_fact_check_with_stub_verifier(retriever):
     class Stub:
-        def entailment_probs(self, claim, hits):
-            return [{"entailment": 0.95, "contradiction": 0.01, "neutral": 0.04} for _ in hits]
+        def entailment_probs(self, claim, premises):
+            return [{"entailment": 0.95, "contradiction": 0.01, "neutral": 0.04} for _ in premises]
 
     p = RAGPipeline(retriever, generator=None, verifier=Stub())
     res = p.fact_check("Quantization makes models smaller.")
     assert res.verdict is Verdict.SUPPORTED and res.confidence == 0.95
     assert res.to_dict()["verdict"] == "SUPPORTED" and res.evidence
+    # the exact sentences used as proof are returned with their source and probabilities
+    assert res.evidence_sentences and all(e.stance == "supports" for e in res.evidence_sentences)
+    first = res.to_dict()["evidence_sentences"][0]
+    assert first["doc_id"] == "quantization" and first["entailment"] == 0.95
+    assert first["text"] and first["chunk_id"].startswith("quantization#")
 
 
 def test_from_settings_end_to_end(settings, sample_corpus):
