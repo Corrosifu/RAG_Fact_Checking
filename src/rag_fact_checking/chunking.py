@@ -10,6 +10,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 
 from rag_fact_checking.schemas import Chunk, Document
+from rag_fact_checking.textutils import strip_references
 
 
 def split_words(text: str, size: int, overlap: int) -> list[str]:
@@ -30,7 +31,11 @@ def split_words(text: str, size: int, overlap: int) -> list[str]:
     return chunks
 
 
-def chunk_document(doc: Document, size: int = 200, overlap: int = 40) -> list[Chunk]:
+def chunk_document(
+    doc: Document, size: int = 200, overlap: int = 40, drop_references: bool = True
+) -> list[Chunk]:
+    """Chunks of a document; the reference list is left out unless ``drop_references=False``."""
+    text = strip_references(doc.text) if drop_references else doc.text
     return [
         Chunk(
             id=f"{doc.id}#{i}",
@@ -40,9 +45,11 @@ def chunk_document(doc: Document, size: int = 200, overlap: int = 40) -> list[Ch
             title=doc.title,
             metadata=doc.metadata,
         )
-        for i, text in enumerate(split_words(doc.text, size, overlap))
+        for i, text in enumerate(split_words(text, size, overlap))
     ]
 
 
-def chunk_documents(docs: Iterable[Document], size: int = 200, overlap: int = 40) -> list[Chunk]:
-    return [c for doc in docs for c in chunk_document(doc, size, overlap)]
+def chunk_documents(
+    docs: Iterable[Document], size: int = 200, overlap: int = 40, drop_references: bool = True
+) -> list[Chunk]:
+    return [c for doc in docs for c in chunk_document(doc, size, overlap, drop_references)]

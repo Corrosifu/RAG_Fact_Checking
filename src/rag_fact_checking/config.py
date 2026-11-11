@@ -43,6 +43,7 @@ class Settings:
     # Chunking (measured in words, not model tokens).
     chunk_size: int = 200
     chunk_overlap: int = 40
+    drop_references: bool = True  # leave the bibliography out of the index
 
     # Retrieval.
     top_k: int = 5
@@ -98,6 +99,7 @@ class Settings:
             data_dir=Path(get("DATA_DIR", str(d.data_dir))),
             chunk_size=_env_int(env, "RAGFC_CHUNK_SIZE", d.chunk_size),
             chunk_overlap=_env_int(env, "RAGFC_CHUNK_OVERLAP", d.chunk_overlap),
+            drop_references=_env_bool(env, "RAGFC_DROP_REFERENCES", d.drop_references),
             top_k=_env_int(env, "RAGFC_TOP_K", d.top_k),
             candidates=_env_int(env, "RAGFC_CANDIDATES", d.candidates),
             embedder=get("EMBEDDER", d.embedder),
