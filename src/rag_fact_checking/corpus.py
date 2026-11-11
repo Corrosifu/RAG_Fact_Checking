@@ -51,7 +51,9 @@ def build_index(
     """Chunk the corpus, embed it in batches and persist the knowledge base."""
     embedder = embedder or build_embedder(settings)
     docs = load_documents(settings.corpus_path)
-    chunks = chunk_documents(docs, settings.chunk_size, settings.chunk_overlap)
+    chunks = chunk_documents(
+        docs, settings.chunk_size, settings.chunk_overlap, settings.drop_references
+    )
     if not chunks:
         raise ValueError("The corpus is empty: nothing to index.")
 

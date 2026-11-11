@@ -14,6 +14,7 @@ from rag_fact_checking.schemas import EvidenceSentence, Hit, Premise, Verdict
 from rag_fact_checking.textutils import (
     clean_text,
     content_terms,
+    drop_reference_neighbourhood,
     is_prose,
     split_sentences,
     strip_title,
@@ -49,7 +50,8 @@ def select_premises(
     for h_idx, hit in enumerate(hits):
         text = strip_title(clean_text(hit.chunk.text), hit.chunk.title)
         window: list[str] = []
-        sentences = [s for s in split_sentences(text) if is_prose(s)] + [""]
+        sentences = [s for s in drop_reference_neighbourhood(split_sentences(text)) if is_prose(s)]
+        sentences.append("")
         for sent in sentences:
             if window and (
                 not sent or sum(len(w.split()) for w in window) + len(sent.split()) > window_words

@@ -17,6 +17,7 @@ from rag_fact_checking.schemas import Hit
 from rag_fact_checking.textutils import (
     clean_text,
     content_terms,
+    drop_reference_neighbourhood,
     is_prose,
     split_sentences,
     strip_title,
@@ -65,9 +66,8 @@ class ExtractiveGenerator:
         candidates: list[tuple[int, int, str, set[str]]] = []
         seen: set[str] = set()
         for h_idx, hit in enumerate(hits):
-            for s_idx, sent in enumerate(
-                split_sentences(strip_title(clean_text(hit.chunk.text), hit.chunk.title))
-            ):
+            sentences = split_sentences(strip_title(clean_text(hit.chunk.text), hit.chunk.title))
+            for s_idx, sent in enumerate(drop_reference_neighbourhood(sentences)):
                 terms = content_terms(sent)
                 key = sent.lower()
                 # overlapping chunks repeat sentences: keep the best-ranked occurrence only

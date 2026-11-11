@@ -170,6 +170,14 @@ experimental, not covered by CI).
 ## Limitations
 
 - English text only; PDF extraction is text-only (no tables/figures).
+- **The bibliography is left out of the index** (`RAGFC_DROP_REFERENCES=true` by default): a citation entry
+  is not evidence, and an NLI model reads one as a contradicting claim (a true claim was once refuted at
+  0.92 because of a single reference entry). The reference list is cut at its heading, or, when the
+  PDF conversion lost the heading, found as a dense run of entries. On 10 arXiv papers it removed 140
+  of 616 chunks and left no bibliography-like sentence; it is a heuristic tuned on this corpus, so
+  check your own papers. **Indexes built with an earlier version still contain references: run
+  `ragfc index` again.** As a safety net, the verifier and the extractive generator also skip
+  bibliography-like sentences.
 - The default `hashing` embedder is lexical-ish; use `sentence-transformers` for semantic matching.
 - The flat numpy index is exact and simple, sized for up to tens of thousands of chunks
   (~8 KB/chunk at 2048 dims); beyond that, switch to an ANN index.
