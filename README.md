@@ -15,8 +15,8 @@ no GPU and no model download required.
 </div>
 
 <p align="center">
-  <img src="img/architecture.png" alt="Architecture" width="900"><br>
-  <em>Original architecture diagram (ingestion → retrieval → generation).</em>
+  <img src="img/demo.gif" alt="Demo: a local model answers a question and each sentence is checked against the sources" width="640"><br>
+  <em>A local model answers, then every sentence is checked against the sources.</em>
 </p>
 
 ## Quick start (offline, ~1 second)
@@ -85,6 +85,11 @@ evidence). Right: an answer from a 0.5B model where 5 of 6 sentences are flagged
 > sources, and use the fact-checker for claims that matter (see [Limitations](#limitations)).
 
 ## How it works
+
+<p align="center">
+  <img src="img/architecture.png" alt="Architecture: build the knowledge base, ask a question with answer verification, fact-check a claim" width="900"><br>
+  <em>Architecture: build the knowledge base, answer a question with sentence-level verification, fact-check a claim.</em>
+</p>
 
 ```
 arXiv → documents (JSONL) → word-window chunks → embeddings ─┐
