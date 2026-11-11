@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Secrets / local config
+.env
+.env.*
+!.env.example
+
+# Generated data (rebuild with `ragfc ingest` / `ragfc index`)
+data/*
+!data/.gitkeep
+
+# Editors / OS
+.idea/
+.vscode/
+.DS_Store
+.ipynb_checkpoints/

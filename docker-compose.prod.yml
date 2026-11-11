@@ -1,0 +1,23 @@
+# Azure App Service (multi-container). See docs/azure.md.
+services:
+  backend:
+    image: ${REG_LOGIN_SERVER}/rag-backend:latest
+    ports: ["8000:8000"]
+    environment:
+      HF_TOKEN: ${HF_TOKEN:-}
+      HF_HOME: /hf_cache
+      RAGFC_DATA_DIR: /app/data
+    volumes:
+      - hf_cache:/hf_cache
+    restart: unless-stopped
+
+  frontend:
+    image: ${REG_LOGIN_SERVER}/rag-frontend:latest
+    ports: ["8501:8501"]
+    environment:
+      BACKEND_URL: http://backend:8000
+    depends_on: [backend]
+    restart: unless-stopped
+
+volumes:
+  hf_cache: {}
