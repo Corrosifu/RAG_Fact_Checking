@@ -54,3 +54,16 @@ def test_verify_answers_flag():
     assert Settings.from_env({"RAGFC_VERIFY_ANSWERS": "1"}).verify_answers is True
     with pytest.raises(ValueError, match="RAGFC_VERIFY_ANSWERS"):
         Settings.from_env({"RAGFC_VERIFY_ANSWERS": "sometimes"})
+
+
+def test_index_backend_setting():
+    assert Settings().index_backend == "numpy"
+    assert Settings.from_env({"RAGFC_INDEX_BACKEND": "faiss"}).index_backend == "faiss"
+    with pytest.raises(ValueError, match="index_backend"):
+        Settings(index_backend="annoy")
+
+
+def test_index_ef_search_setting():
+    assert Settings.from_env({"RAGFC_INDEX_EF_SEARCH": "512"}).index_ef_search == 512
+    with pytest.raises(ValueError, match="index_ef_search"):
+        Settings(index_ef_search=0)

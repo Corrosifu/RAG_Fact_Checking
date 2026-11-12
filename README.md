@@ -100,7 +100,7 @@ arXiv → documents (JSONL) → word-window chunks → embeddings ─┐
 | Stage | Default (small machine) | Optional upgrade (`pip install -e ".[ml]"`) |
 |---|---|---|
 | Embeddings | `hashing` – feature hashing of word uni/bi-grams, deterministic, no download | `sentence-transformers` (`all-MiniLM-L6-v2`, ~90 MB) |
-| Retrieval | exact cosine (numpy) + BM25, fused with **Reciprocal Rank Fusion** | + cross-encoder reranker (`RAGFC_RERANKER=cross-encoder`) |
+| Retrieval | exact cosine (numpy; optional FAISS HNSW for large corpora) + BM25, fused with **Reciprocal Rank Fusion** | + cross-encoder reranker (`RAGFC_RERANKER=cross-encoder`) |
 | Generation | `extractive` – selects and cites the best evidence sentences | `hf` – small instruct LLM, CPU or GPU (`Qwen2.5-0.5B-Instruct` by default; Llama-3.2-1B works with `HF_TOKEN`) |
 | Answer check | off without a verifier | `nli` – each sentence of the generated answer is checked against the sources (`RAGFC_VERIFY_ANSWERS=false` to disable) → ✅ supported / ❌ contradicted / ⚠️ not confirmed |
 | Fact-check | disabled (returns HTTP 501) | `nli` – entailment/contradiction over short evidence windows (a few sentences) selected from the retrieved passages → `SUPPORTED` / `REFUTED` / `NOT_ENOUGH_INFO` |
@@ -144,7 +144,7 @@ src/rag_fact_checking/
   ingestion.py     arXiv Atom API → documents   generation.py  extractive / HF generators
   chunking.py      word-window chunker          verifier.py    NLI claim verification
   embeddings.py    hashing / sentence-transf.   pipeline.py    RAGPipeline (ask, fact_check)
-  index.py         numpy index (no pickle)      api.py · cli.py · client.py
+  index.py         numpy index (+ FAISS opt.)   api.py · cli.py · client.py
   evaluation/      retrieval metrics (+ RAGAS)  sample/       bundled demo corpus + test set
 ui/streamlit_app.py   docker/   docs/   tests/
 ```
@@ -178,9 +178,24 @@ experimental, not covered by CI).
   check your own papers. **Indexes built with an earlier version still contain references: run
   `ragfc index` again.** As a safety net, the verifier and the extractive generator also skip
   bibliography-like sentences.
+- **Optional FAISS backend** (`pip install -e ".[faiss]"`, `RAGFC_INDEX_BACKEND=faiss`): an
+  approximate HNSW graph built in memory from `vectors.npy` on first query (the on-disk format
+  and the numpy default do not change). `RAGFC_INDEX_EF_SEARCH` trades recall for speed.
+  `python benchmarks/index_backends.py` measured, on synthetic 384-d vectors (k=10, single CPU,
+  not real text embeddings):
+
+  | chunks | numpy | FAISS (efSearch 256) | FAISS recall@10 | graph build |
+  |---|---|---|---|---|
+  | 10,000 | 0.28 ms | 0.43 ms | 0.98 | 1 s |
+  | 50,000 | 1.3 ms | 0.63 ms | 0.91 | 7 s |
+  | 200,000 | 6.0 ms | 1.3 ms | 0.83 | 44 s |
+
+  So below roughly 50k chunks numpy is as fast and exact; FAISS pays off for larger corpora, at
+  the cost of approximate answers (efSearch 512 gives 0.92 recall at 200k chunks for 2.3 ms).
+  Retrieval quality on real text was not measured.
 - The default `hashing` embedder is lexical-ish; use `sentence-transformers` for semantic matching.
 - The flat numpy index is exact and simple, sized for up to tens of thousands of chunks
-  (~8 KB/chunk at 2048 dims); beyond that, switch to an ANN index.
+  (~8 KB/chunk at 2048 dims). Beyond that, an optional FAISS backend is available (below).
 - Verdicts come from a small NLI model over retrieved passages: treat them as decision support,
   not ground truth. Conflicting evidence (strong support *and* strong contradiction) yields
   `NOT_ENOUGH_INFO` rather than a guess. Checked by hand on 7 claims over 10 papers: no
