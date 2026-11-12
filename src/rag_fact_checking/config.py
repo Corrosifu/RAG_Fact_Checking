@@ -48,6 +48,8 @@ class Settings:
     # Retrieval.
     top_k: int = 5
     candidates: int = 20
+    index_backend: str = "numpy"  # "numpy" (exact) | "faiss" (approximate HNSW, extra `faiss`)
+    index_ef_search: int = 256  # faiss only: recall/speed trade-off of the HNSW search
     embedder: str = "hashing"  # "hashing" | "sentence-transformers"
     embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"
     reranker: str = "none"  # "none" | "cross-encoder"
@@ -86,6 +88,10 @@ class Settings:
             raise ValueError("chunk_overlap must be in [0, chunk_size)")
         if self.top_k <= 0 or self.candidates < self.top_k:
             raise ValueError("need 0 < top_k <= candidates")
+        if self.index_ef_search <= 0:
+            raise ValueError("index_ef_search must be positive")
+        if self.index_backend not in ("numpy", "faiss"):
+            raise ValueError("index_backend must be 'numpy' or 'faiss'")
 
     @classmethod
     def from_env(cls, env: Mapping[str, str] | None = None) -> "Settings":
@@ -102,6 +108,8 @@ class Settings:
             drop_references=_env_bool(env, "RAGFC_DROP_REFERENCES", d.drop_references),
             top_k=_env_int(env, "RAGFC_TOP_K", d.top_k),
             candidates=_env_int(env, "RAGFC_CANDIDATES", d.candidates),
+            index_backend=get("INDEX_BACKEND", d.index_backend),
+            index_ef_search=_env_int(env, "RAGFC_INDEX_EF_SEARCH", d.index_ef_search),
             embedder=get("EMBEDDER", d.embedder),
             embedding_model=get("EMBEDDING_MODEL", d.embedding_model),
             reranker=get("RERANKER", d.reranker),

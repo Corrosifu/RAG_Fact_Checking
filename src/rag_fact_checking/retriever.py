@@ -56,7 +56,12 @@ class HybridRetriever:
 
     @classmethod
     def from_settings(cls, settings: Settings, embedder: Embedder) -> "HybridRetriever":
-        kb = KnowledgeBase.load(settings.index_dir, expected_embedder=embedder.name)
+        kb = KnowledgeBase.load(
+            settings.index_dir,
+            expected_embedder=embedder.name,
+            backend=settings.index_backend,
+            ef_search=settings.index_ef_search,
+        )
         reranker: Reranker | None = None
         if settings.reranker == "cross-encoder":
             reranker = CrossEncoderReranker(settings.reranker_model, token=settings.hf_token)
