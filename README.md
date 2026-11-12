@@ -144,7 +144,7 @@ src/rag_fact_checking/
   ingestion.py     arXiv Atom API → documents   generation.py  extractive / HF generators
   chunking.py      word-window chunker          verifier.py    NLI claim verification
   embeddings.py    hashing / sentence-transf.   pipeline.py    RAGPipeline (ask, fact_check)
-  index.py         numpy index (+ optional FAISS)      api.py · cli.py · client.py
+  index.py         numpy index (+ FAISS opt.)   api.py · cli.py · client.py
   evaluation/      retrieval metrics (+ RAGAS)  sample/       bundled demo corpus + test set
 ui/streamlit_app.py   docker/   docs/   tests/
 ```
