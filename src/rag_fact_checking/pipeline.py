@@ -10,10 +10,9 @@ from rag_fact_checking.retriever import HybridRetriever
 from rag_fact_checking.schemas import Answer, FactCheckResult, Hit, Source
 from rag_fact_checking.verifier import (
     Verifier,
-    aggregate_verdict,
     build_verifier,
-    select_premises,
     to_evidence_sentences,
+    verify_claim,
 )
 
 
@@ -80,9 +79,9 @@ class RAGPipeline:
                 "(requires the 'ml' extra)."
             )
         hits = self.retriever.retrieve(claim, top_k or self.top_k)
-        premises = select_premises(claim, hits)
-        probs = self.verifier.entailment_probs(claim, premises) if premises else []
-        verdict, confidence = aggregate_verdict(probs, self.nli_threshold)
+        verdict, confidence, premises, probs = verify_claim(
+            claim, hits, self.verifier, self.nli_threshold
+        )
         return FactCheckResult(
             claim,
             verdict,

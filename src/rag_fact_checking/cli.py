@@ -83,6 +83,78 @@ def cmd_eval(args: argparse.Namespace, settings: Settings) -> int:
     return 0
 
 
+def cmd_eval_scifact(args: argparse.Namespace, settings: Settings) -> int:
+    import dataclasses
+    import re
+    from datetime import date
+    from pathlib import Path
+
+    from rag_fact_checking.corpus import build_index, save_documents
+    from rag_fact_checking.embeddings import build_embedder
+    from rag_fact_checking.evaluation import scifact
+    from rag_fact_checking.index import KnowledgeBase, KnowledgeBaseNotFound
+    from rag_fact_checking.retriever import HybridRetriever
+    from rag_fact_checking.verifier import build_verifier
+
+    root = Path(args.data_dir) if args.data_dir else settings.data_dir / "scifact"
+    documents = scifact.build_documents(scifact.read_parquet(scifact.download(root, "corpus")))
+    rows = scifact.read_parquet(scifact.download(root, args.split))
+    claims = scifact.build_claims(rows)
+    if args.limit:
+        claims = claims[: args.limit]
+
+    embedder = build_embedder(settings)
+    # Abstracts have no bibliography, so the reference heuristics are switched off.
+    run = dataclasses.replace(
+        settings,
+        data_dir=root / ("run-" + re.sub(r"[^A-Za-z0-9._-]+", "_", embedder.name)),
+        drop_references=False,
+    )
+    try:
+        KnowledgeBase.load(run.index_dir, expected_embedder=embedder.name)
+    except (KnowledgeBaseNotFound, ValueError):
+        print(f"Indexing {len(documents)} abstracts with {embedder.name} ...", file=sys.stderr)
+        save_documents(documents, run.corpus_path)
+        build_index(run, embedder)
+    retriever = HybridRetriever.from_settings(run, embedder)
+
+    verifier = None if args.no_verify else build_verifier(settings)
+    if verifier is None:
+        print("No verifier: only the retrieval experiment runs.", file=sys.stderr)
+    result = scifact.run_scifact(
+        retriever,
+        verifier,
+        claims,
+        documents,
+        chunk_size=run.chunk_size,
+        chunk_overlap=run.chunk_overlap,
+        top_k=settings.top_k,
+        threshold=args.threshold,
+        progress=lambda msg: print(msg, file=sys.stderr),
+    )
+    result = {
+        "benchmark": "SciFact",
+        "split": args.split,
+        "date": date.today().isoformat(),
+        "setup": {
+            "embedder": embedder.name,
+            "verifier": settings.verifier_model if verifier else None,
+            "chunk_size": run.chunk_size,
+            "chunk_overlap": run.chunk_overlap,
+            "top_k": settings.top_k,
+            "nli_threshold": args.threshold,
+            "documents": len(documents),
+        },
+        **result,
+    }
+    text = json.dumps(result, indent=2, ensure_ascii=False)
+    if args.output:
+        Path(args.output).parent.mkdir(parents=True, exist_ok=True)
+        Path(args.output).write_text(text + "\n", encoding="utf-8")
+    print(text)
+    return 0
+
+
 def cmd_serve(args: argparse.Namespace, settings: Settings) -> int:
     try:
         import uvicorn
@@ -125,6 +197,17 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--testset", default=None, help="JSONL file (default: bundled sample test set)")
     s.add_argument("-k", type=int, default=5)
     s.set_defaults(func=cmd_eval)
+
+    s = sub.add_parser(
+        "eval-scifact", help="benchmark retrieval and fact-checking on SciFact (needs [bench])"
+    )
+    s.add_argument("--split", choices=["train", "validation"], default="validation")
+    s.add_argument("--limit", type=int, default=0, help="only the first N claims (smoke test)")
+    s.add_argument("--threshold", type=float, default=0.6, help="NLI decision threshold")
+    s.add_argument("--no-verify", action="store_true", help="retrieval experiment only")
+    s.add_argument("--data-dir", default=None, help="cache for the dataset and the indexes")
+    s.add_argument("--output", default=None, help="also write the JSON result to this file")
+    s.set_defaults(func=cmd_eval_scifact)
 
     s = sub.add_parser("serve", help="start the REST API")
     s.add_argument("--host", default="127.0.0.1")

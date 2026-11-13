@@ -1,0 +1,118 @@
+{
+  "benchmark": "SciFact",
+  "split": "validation",
+  "date": "2026-11-13",
+  "setup": {
+    "embedder": "hashing-2048",
+    "verifier": "cross-encoder/nli-MiniLM2-L6-H768",
+    "chunk_size": 200,
+    "chunk_overlap": 40,
+    "top_k": 5,
+    "nli_threshold": 0.6,
+    "documents": 5183
+  },
+  "claims": 300,
+  "label_counts": {
+    "NOT_ENOUGH_INFO": 112,
+    "SUPPORTED": 124,
+    "REFUTED": 64
+  },
+  "retrieval": {
+    "n": 188,
+    "hit@1": 0.5053,
+    "recall@1": 0.4942,
+    "hit@5": 0.75,
+    "recall@5": 0.7314,
+    "hit@10": 0.8138,
+    "recall@10": 0.7901,
+    "mrr": 0.6187
+  },
+  "oracle": {
+    "n": 300,
+    "accuracy": 0.5467,
+    "macro_f1": 0.514,
+    "majority_baseline": 0.4133,
+    "per_class": {
+      "SUPPORTED": {
+        "precision": 0.9167,
+        "recall": 0.2661,
+        "f1": 0.4125,
+        "support": 124
+      },
+      "REFUTED": {
+        "precision": 0.5577,
+        "recall": 0.4531,
+        "f1": 0.5,
+        "support": 64
+      },
+      "NOT_ENOUGH_INFO": {
+        "precision": 0.4811,
+        "recall": 0.9107,
+        "f1": 0.6296,
+        "support": 112
+      }
+    },
+    "confusion": {
+      "SUPPORTED": {
+        "SUPPORTED": 33,
+        "REFUTED": 13,
+        "NOT_ENOUGH_INFO": 78
+      },
+      "REFUTED": {
+        "SUPPORTED": 3,
+        "REFUTED": 29,
+        "NOT_ENOUGH_INFO": 32
+      },
+      "NOT_ENOUGH_INFO": {
+        "SUPPORTED": 0,
+        "REFUTED": 10,
+        "NOT_ENOUGH_INFO": 102
+      }
+    },
+    "seconds_per_claim": 0.081
+  },
+  "end_to_end": {
+    "n": 300,
+    "accuracy": 0.46,
+    "macro_f1": 0.4381,
+    "majority_baseline": 0.4133,
+    "per_class": {
+      "SUPPORTED": {
+        "precision": 0.7568,
+        "recall": 0.2258,
+        "f1": 0.3478,
+        "support": 124
+      },
+      "REFUTED": {
+        "precision": 0.3721,
+        "recall": 0.5,
+        "f1": 0.4267,
+        "support": 64
+      },
+      "NOT_ENOUGH_INFO": {
+        "precision": 0.4407,
+        "recall": 0.6964,
+        "f1": 0.5398,
+        "support": 112
+      }
+    },
+    "confusion": {
+      "SUPPORTED": {
+        "SUPPORTED": 28,
+        "REFUTED": 26,
+        "NOT_ENOUGH_INFO": 70
+      },
+      "REFUTED": {
+        "SUPPORTED": 3,
+        "REFUTED": 32,
+        "NOT_ENOUGH_INFO": 29
+      },
+      "NOT_ENOUGH_INFO": {
+        "SUPPORTED": 6,
+        "REFUTED": 28,
+        "NOT_ENOUGH_INFO": 78
+      }
+    },
+    "seconds_per_claim": 0.283
+  }
+}
