@@ -130,6 +130,20 @@ class NLIVerifier:
         return [dict(zip(self._labels, row, strict=True)) for row in probs]
 
 
+def verify_claim(
+    claim: str, hits: Sequence[Hit], verifier: Verifier, threshold: float = 0.6
+) -> tuple[Verdict, float, list[Premise], list[Probs]]:
+    """Claim + retrieved passages -> verdict, confidence, evidence windows and their probabilities.
+
+    The single code path shared by ``RAGPipeline.fact_check`` and the SciFact benchmark, so the
+    benchmark measures exactly what the product does.
+    """
+    premises = select_premises(claim, hits)
+    probs = verifier.entailment_probs(claim, premises) if premises else []
+    verdict, confidence = aggregate_verdict(probs, threshold)
+    return verdict, confidence, premises, probs
+
+
 def to_evidence_sentences(
     premises: Sequence[Premise], probs: Sequence[Probs], threshold: float = 0.6
 ) -> list[EvidenceSentence]:

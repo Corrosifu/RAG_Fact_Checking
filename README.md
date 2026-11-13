@@ -162,6 +162,41 @@ it runs in about a second. CI runs lint + tests on Python 3.10 and 3.12.
 
 ## Evaluation
 
+### SciFact benchmark
+
+[SciFact](https://github.com/allenai/scifact) pairs 300 scientific claims (validation split, the
+original dev set) with paper abstracts: 124 supported, 64 refuted, 112 without enough evidence.
+`ragfc eval-scifact` (`pip install -e ".[bench]"`, downloads the data, needs `RAGFC_VERIFIER=nli`)
+runs the project's own retriever and verifier on it. The default NLI model is **not fine-tuned on
+SciFact**; the decision threshold (0.6) was fixed beforehand and not tuned on this set.
+
+| Stage (what it isolates) | Result |
+|---|---|
+| **Retrieval**, MiniLM embeddings: finds a gold abstract among the top 5 | **90 %** (hit@1 71 %, hit@10 95 %, MRR 0.80) |
+| Retrieval, default `hashing` embedder (no model) | 75 % at top 5 (hit@1 51 %, MRR 0.62) |
+| **Verification with the right abstracts given** (3 classes; always answering the majority class scores 41 %) | accuracy **55 %**, macro-F1 0.51 |
+| **End to end**, MiniLM (retrieve from 5,183 abstracts, then verify) | accuracy **48 %**, macro-F1 0.45 |
+
+What this says, without flattering it:
+
+- **Retrieval works; the verifier is the bottleneck.** When the verifier says `SUPPORTED` it is
+  right 92 % of the time (33 of 36), but it finds only 27 % of the supported claims: 78 of the 124
+  come out as `NOT_ENOUGH_INFO`. For 73 of those 78, evidence windows were found and the NLI model
+  just did not see an entailment (median top probability 0.10): SciFact claims are paraphrases of
+  biomedical findings, and a small general-purpose NLI model is not enough.
+- The conservative design (refuse to guess) is why precision is high and recall low. It is the
+  right failure mode for a fact-checker, but on this benchmark it costs accuracy.
+- End to end the system is only about 6 points above always answering the majority class. **It is
+  not a strong verifier yet**; fine-tuning the NLI model on SciFact's training split is the next step.
+- With 300 claims, an accuracy of 50 % carries a ±6 point margin (95 % interval): do not read
+  differences of a few points. Single deterministic run, abstract-level labels (sentence-level
+  rationales are not scored), no comparison with published systems.
+
+Full tables, confusion matrices and the exact setup: [`docs/evaluation.md`](docs/evaluation.md);
+raw results: [`docs/results/`](docs/results/).
+
+### Retrieval metrics on your own corpus
+
 `ragfc eval` reports **hit-rate@k, recall@k and MRR** from a JSONL test set
 (`{"query": ..., "relevant_doc_ids": [...]}`) — fast, deterministic, no LLM judge. An optional
 RAGAS wrapper lives in `rag_fact_checking.evaluation.ragas_eval` (`pip install -e ".[eval]"`,
@@ -199,7 +234,8 @@ experimental, not covered by CI).
 - Verdicts come from a small NLI model over retrieved passages: treat them as decision support,
   not ground truth. Conflicting evidence (strong support *and* strong contradiction) yields
   `NOT_ENOUGH_INFO` rather than a guess. Checked by hand on 7 claims over 10 papers: no
-  confidently wrong verdict, 2 conservative `NOT_ENOUGH_INFO` — a sanity check, not a benchmark.
+  confidently wrong verdict, 2 conservative `NOT_ENOUGH_INFO` — a sanity check. The SciFact
+  benchmark (above) is the real measurement: 55 % accuracy given the right abstracts.
 - Answer verification is a **filter, not a guarantee**: on a handful of cases it flagged the invented
   sentences of a 0.5B model and confirmed a faithful answer, but it can miss an invented clause
   inside an otherwise supported sentence, and flag faithful sentences that combine facts spread
