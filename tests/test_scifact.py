@@ -1,8 +1,8 @@
 import pytest
-from tests.stubs import StubVerifier
 
 from rag_fact_checking.evaluation import scifact
 from rag_fact_checking.schemas import Chunk, Document, Hit, Verdict
+from stubs import StubVerifier
 
 S, R, N = Verdict.SUPPORTED, Verdict.REFUTED, Verdict.NOT_ENOUGH_INFO
 
