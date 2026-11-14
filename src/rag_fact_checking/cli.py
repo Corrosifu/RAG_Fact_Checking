@@ -304,6 +304,44 @@ def cmd_finetune_nli(args: argparse.Namespace, settings: Settings) -> int:
     return 0
 
 
+def cmd_e2e(args: argparse.Namespace, settings: Settings) -> int:
+    import tempfile
+    from pathlib import Path
+
+    from rag_fact_checking.evaluation import e2e
+
+    with tempfile.TemporaryDirectory() as tmp:
+        pipeline, embedder, setup, items = e2e.prepare_golden_pipeline(
+            Path(tmp), verifier=args.verifier, base=settings
+        )
+        result = e2e.run_e2e(pipeline, items, embedder, setup)
+    print(e2e.format_summary(result.summary))
+    if args.output:
+        out = Path(args.output)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(
+            json.dumps(e2e.nan_free(result.to_dict()), indent=2, ensure_ascii=False) + "\n",
+            encoding="utf-8",
+        )
+    if args.update_baseline:
+        if not args.baseline:
+            raise ValueError("--update-baseline needs --baseline FILE")
+        path = Path(args.baseline)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(e2e.baseline_from(result), indent=2) + "\n", encoding="utf-8")
+        print(f"Baseline written to {path}")
+        return 0
+    if args.baseline:
+        problems = e2e.compare_to_baseline(
+            result, json.loads(Path(args.baseline).read_text(encoding="utf-8")), args.tolerance
+        )
+        if problems:
+            print("REGRESSION:", *problems, sep="\n  - ", file=sys.stderr)
+            return 1
+        print(f"No regression against {args.baseline} (tolerance {args.tolerance}).")
+    return 0
+
+
 def cmd_serve(args: argparse.Namespace, settings: Settings) -> int:
     try:
         import uvicorn
@@ -386,6 +424,21 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--data-dir", default=None)
     s.add_argument("--output", default=None, help="also write the JSON report to this file")
     s.set_defaults(func=cmd_finetune_nli)
+
+    s = sub.add_parser(
+        "e2e", help="end-to-end evaluation on the bundled golden question set (no LLM judge)"
+    )
+    s.add_argument(
+        "--verifier",
+        choices=["overlap", "env", "none"],
+        default="overlap",
+        help="overlap: deterministic test double (CI); env: RAGFC_VERIFIER (e.g. the NLI model)",
+    )
+    s.add_argument("--baseline", default=None, help="JSON file with the reference scores")
+    s.add_argument("--update-baseline", action="store_true", help="write the baseline and stop")
+    s.add_argument("--tolerance", type=float, default=0.05, help="allowed drop per gated metric")
+    s.add_argument("--output", default=None, help="write the full JSON result here")
+    s.set_defaults(func=cmd_e2e)
 
     s = sub.add_parser("serve", help="start the REST API")
     s.add_argument("--host", default="127.0.0.1")

@@ -1,4 +1,4 @@
-.PHONY: install test lint format demo serve ui
+.PHONY: install test lint format demo serve ui e2e
 install:  ## dev install
 	pip install -e ".[dev,ui]"
 test:  ## run tests
@@ -13,3 +13,5 @@ serve:
 	ragfc serve
 ui:
 	streamlit run ui/streamlit_app.py
+e2e:  ## end-to-end regression gate (lightweight components, golden question set)
+	ragfc e2e --baseline tests/e2e/baseline.json

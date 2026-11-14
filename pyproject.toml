@@ -28,7 +28,7 @@ ragfc = "rag_fact_checking.cli:main"
 where = ["src"]
 
 [tool.setuptools.package-data]
-rag_fact_checking = ["sample/*.jsonl"]
+rag_fact_checking = ["sample/*.jsonl", "sample/golden/*.jsonl"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -1,0 +1,20 @@
+{
+  "setup": {
+    "embedder": "hashing-2048",
+    "generator": "extractive",
+    "verifier": "overlap-double",
+    "chunk_size": 70,
+    "chunk_overlap": 25,
+    "top_k": 3,
+    "items": 30
+  },
+  "metrics": {
+    "retrieval.hit": 0.9615,
+    "retrieval.context_recall": 0.9348,
+    "answer.f1": 0.3327,
+    "answer.contains": 0.7059,
+    "faithfulness": 1.0,
+    "abstention.rate": 0.0,
+    "claims.accuracy": 1.0
+  }
+}
