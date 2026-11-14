@@ -1,0 +1,43 @@
+{
+  "base_model": "cross-encoder/nli-MiniLM2-L6-H768",
+  "train_claims": 687,
+  "holdout_claims": 122,
+  "pairs": {
+    "entailment": 531,
+    "neutral": 3011,
+    "contradiction": 290
+  },
+  "hyperparameters": {
+    "epochs": 2,
+    "lr": 2e-05,
+    "batch_size": 16,
+    "seed": 0,
+    "max_len": 192
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.8782,
+      "holdout": 0.4302
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.5291,
+      "holdout": 0.4246
+    }
+  ],
+  "best_epoch": 1,
+  "best_holdout": 0.4302,
+  "thresholds_from_holdout": {
+    "base": {
+      "threshold": 0.6,
+      "holdout_open_top3_f1": 0.2759,
+      "holdout_open_top3_f1_at_0.6": 0.2759
+    },
+    "fine_tuned": {
+      "threshold": 0.7,
+      "holdout_open_top3_f1": 0.4528,
+      "holdout_open_top3_f1_at_0.6": 0.4302
+    }
+  }
+}

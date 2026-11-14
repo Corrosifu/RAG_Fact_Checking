@@ -31,6 +31,11 @@ FILES = {
     "validation": "claims/validation/0000.parquet",
     "test": "claims/test/0000.parquet",
 }
+# Distractor collections (BEIR) used to test how the retriever copes with a larger corpus.
+EXTRA_CORPORA = {
+    name: f"https://huggingface.co/datasets/BeIR/{name}/resolve/main/corpus/corpus-00000-of-00001.parquet"
+    for name in ("nfcorpus", "scidocs")
+}
 LABEL_MAP = {"SUPPORT": Verdict.SUPPORTED, "CONTRADICT": Verdict.REFUTED}
 LABELS = (Verdict.SUPPORTED, Verdict.REFUTED, Verdict.NOT_ENOUGH_INFO)
 
@@ -61,6 +66,31 @@ def download(data_dir: Path | str, name: str) -> Path:
     tmp.write_bytes(resp.content)
     tmp.replace(target)
     return target
+
+
+def download_extra(data_dir: Path | str, name: str) -> Path:
+    """Fetch one distractor collection (cached)."""
+    import requests
+
+    target = Path(data_dir) / f"extra_{name}.parquet"
+    if target.exists():
+        return target
+    target.parent.mkdir(parents=True, exist_ok=True)
+    resp = requests.get(EXTRA_CORPORA[name], timeout=300)
+    resp.raise_for_status()
+    tmp = target.with_suffix(".part")
+    tmp.write_bytes(resp.content)
+    tmp.replace(target)
+    return target
+
+
+def build_extra_documents(rows: Sequence[dict[str, Any]], name: str) -> list[Document]:
+    """BEIR rows (``_id``, ``title``, ``text``) as documents; ids are prefixed to never collide."""
+    return [
+        Document(f"{name}:{r['_id']}", f"{r['title']}. {r['text']}".strip(), r["title"], {})
+        for r in rows
+        if r.get("text")
+    ]
 
 
 def read_parquet(path: Path | str) -> list[dict[str, Any]]:
@@ -95,6 +125,23 @@ def build_claims(rows: Sequence[dict[str, Any]]) -> list[Claim]:
         label = labels[0] if labels else Verdict.NOT_ENOUGH_INFO
         claims.append(Claim(cid, group[0]["claim"], label, cited, relevant))
     return claims
+
+
+def build_rationales(
+    rows: Sequence[dict[str, Any]],
+) -> dict[int, list[tuple[str, Verdict, list[int]]]]:
+    """Gold evidence per claim: (abstract id, label, indices of the rationale sentences)."""
+    out: dict[int, list[tuple[str, Verdict, list[int]]]] = {}
+    for r in rows:
+        if r["evidence_label"] in LABEL_MAP:
+            out.setdefault(int(r["id"]), []).append(
+                (
+                    str(r["evidence_doc_id"]),
+                    LABEL_MAP[r["evidence_label"]],
+                    list(r["evidence_sentences"]),
+                )
+            )
+    return out
 
 
 def mixed_label_claims(rows: Sequence[dict[str, Any]]) -> int:
@@ -173,6 +220,106 @@ def unique_docs(hits: Sequence[Hit]) -> list[str]:
     return list(dict.fromkeys(h.chunk.doc_id for h in hits))
 
 
+def oracle_probs(
+    claims: Sequence[Claim],
+    documents: Sequence[Document],
+    verifier: Any,
+    *,
+    chunk_size: int = 200,
+    chunk_overlap: int = 40,
+) -> list[list[Any]]:
+    """NLI probabilities of each claim's evidence windows, computed once (cited abstracts only).
+
+    Verdicts for any threshold are then a cheap ``aggregate_verdict`` call, which makes the
+    threshold sweep free.
+    """
+    from rag_fact_checking.verifier import select_premises
+
+    by_id = {d.id: d for d in documents}
+    out = []
+    for c in claims:
+        chunks = chunk_documents(
+            [by_id[d] for d in c.cited if d in by_id], chunk_size, chunk_overlap, False
+        )
+        premises = select_premises(c.text, [Hit(ch, 1.0) for ch in chunks])
+        out.append(list(verifier.entailment_probs(c.text, premises)) if premises else [])
+    return out
+
+
+def sweep_threshold(
+    gold: Sequence[Verdict], probs: Sequence[Sequence[Any]], thresholds: Sequence[float]
+) -> dict[float, dict[str, Any]]:
+    """Classification report of the oracle verdicts for each decision threshold."""
+    from rag_fact_checking.verifier import aggregate_verdict
+
+    return {
+        t: classification_report(gold, [aggregate_verdict(p, t)[0] for p in probs])
+        for t in thresholds
+    }
+
+
+def abstract_label_report(
+    predictions: Sequence[tuple[int, str, Verdict]], claims: Sequence[Claim]
+) -> dict[str, Any]:
+    """SciFact "Abstract Label-Only" metric (Wadden et al., 2020), the one published systems report.
+
+    A predicted (claim, abstract, label) counts as correct if the abstract is a gold evidence
+    abstract of the claim and the label matches. NOT_ENOUGH_INFO predictions are not predictions.
+    Micro precision / recall / F1 over all claims.
+    """
+    gold = {(c.id, d, c.label) for c in claims for d in c.relevant}
+    predicted = {p for p in predictions if p[2] != Verdict.NOT_ENOUGH_INFO}
+    correct = len(predicted & gold)
+    prec = correct / len(predicted) if predicted else 0.0
+    rec = correct / len(gold) if gold else 0.0
+    f1 = 2 * prec * rec / (prec + rec) if prec + rec else 0.0
+    return {
+        "precision": round(prec, 4),
+        "recall": round(rec, 4),
+        "f1": round(f1, 4),
+        "predicted": len(predicted),
+        "gold": len(gold),
+        "correct": correct,
+    }
+
+
+def abstract_predictions(
+    claims: Sequence[Claim],
+    candidates: Sequence[Sequence[str]],
+    documents: Sequence[Document],
+    verifier: Any,
+    *,
+    threshold: float = 0.6,
+    chunk_size: int = 200,
+    chunk_overlap: int = 40,
+    cache: dict[tuple[int, str], list[Any]] | None = None,
+) -> list[tuple[int, str, Verdict]]:
+    """Label every candidate abstract of every claim on its own (full abstract as evidence).
+
+    ``candidates[i]`` are the abstract ids to judge for ``claims[i]``: the cited abstracts in
+    the "oracle abstract" setting, the retrieved ones in the "open" setting. NLI probabilities
+    are kept in ``cache`` so several thresholds or cut-offs reuse them.
+    """
+    from rag_fact_checking.verifier import aggregate_verdict, select_premises
+
+    by_id = {d.id: d for d in documents}
+    cache = {} if cache is None else cache
+    out: list[tuple[int, str, Verdict]] = []
+    for claim, doc_ids in zip(claims, candidates, strict=True):
+        for doc_id in doc_ids:
+            if doc_id not in by_id:
+                continue
+            key = (claim.id, doc_id)
+            if key not in cache:
+                chunks = chunk_documents([by_id[doc_id]], chunk_size, chunk_overlap, False)
+                premises = select_premises(claim.text, [Hit(ch, 1.0) for ch in chunks])
+                cache[key] = (
+                    list(verifier.entailment_probs(claim.text, premises)) if premises else []
+                )
+            out.append((claim.id, doc_id, aggregate_verdict(cache[key], threshold)[0]))
+    return out
+
+
 # -------------------------------------------------------------------- experiments
 
 
@@ -236,4 +383,25 @@ def run_scifact(
     result["end_to_end"]["seconds_per_claim"] = round(
         (time.perf_counter() - start) / len(claims), 3
     )
+
+    # 4. the published "Abstract Label-Only" metric, per (claim, abstract) pair
+    cache: dict[tuple[int, str], list[Any]] = {}
+    common = {"threshold": threshold, "chunk_size": chunk_size, "chunk_overlap": chunk_overlap}
+    retrieved = [unique_docs(retriever.retrieve(c.text, 50)) for c in claims]
+    abstract_level = {
+        "oracle_abstract": abstract_label_report(
+            abstract_predictions(
+                claims, [c.cited for c in claims], documents, verifier, cache=cache, **common
+            ),
+            claims,
+        )
+    }
+    for k in (3, 10):
+        abstract_level[f"open_top{k}"] = abstract_label_report(
+            abstract_predictions(
+                claims, [r[:k] for r in retrieved], documents, verifier, cache=cache, **common
+            ),
+            claims,
+        )
+    result["abstract_level"] = abstract_level
     return result
