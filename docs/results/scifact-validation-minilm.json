@@ -9,7 +9,8 @@
     "chunk_overlap": 40,
     "top_k": 5,
     "nli_threshold": 0.6,
-    "documents": 5183
+    "documents": 5183,
+    "extra_corpus": []
   },
   "claims": 300,
   "label_counts": {
@@ -69,7 +70,7 @@
         "NOT_ENOUGH_INFO": 102
       }
     },
-    "seconds_per_claim": 0.072
+    "seconds_per_claim": 0.089
   },
   "end_to_end": {
     "n": 300,
@@ -113,6 +114,32 @@
         "NOT_ENOUGH_INFO": 81
       }
     },
-    "seconds_per_claim": 0.278
+    "seconds_per_claim": 0.312
+  },
+  "abstract_level": {
+    "oracle_abstract": {
+      "precision": 0.7097,
+      "recall": 0.3158,
+      "f1": 0.4371,
+      "predicted": 93,
+      "gold": 209,
+      "correct": 66
+    },
+    "open_top3": {
+      "precision": 0.3187,
+      "recall": 0.2775,
+      "f1": 0.2967,
+      "predicted": 182,
+      "gold": 209,
+      "correct": 58
+    },
+    "open_top10": {
+      "precision": 0.1533,
+      "recall": 0.3014,
+      "f1": 0.2032,
+      "predicted": 411,
+      "gold": 209,
+      "correct": 63
+    }
   }
 }

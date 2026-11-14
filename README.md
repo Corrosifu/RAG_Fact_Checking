@@ -166,34 +166,41 @@ it runs in about a second. CI runs lint + tests on Python 3.10 and 3.12.
 
 [SciFact](https://github.com/allenai/scifact) pairs 300 scientific claims (validation split, the
 original dev set) with paper abstracts: 124 supported, 64 refuted, 112 without enough evidence.
-`ragfc eval-scifact` (`pip install -e ".[bench]"`, downloads the data, needs `RAGFC_VERIFIER=nli`)
-runs the project's own retriever and verifier on it. The default NLI model is **not fine-tuned on
-SciFact**; the decision threshold (0.6) was fixed beforehand and not tuned on this set.
+`ragfc eval-scifact` (`pip install -e ".[bench]"`, needs `RAGFC_VERIFIER=nli`) runs the project's
+own retriever and verifier on it, and `ragfc finetune-nli` fine-tunes the NLI model on SciFact's
+training claims (CPU, several minutes per epoch). Epoch and decision threshold are chosen on
+held-out *training* claims; validation is only used for the numbers below.
 
-| Stage (what it isolates) | Result |
-|---|---|
-| **Retrieval**, MiniLM embeddings: finds a gold abstract among the top 5 | **90 %** (hit@1 71 %, hit@10 95 %, MRR 0.80) |
-| Retrieval, default `hashing` embedder (no model) | 75 % at top 5 (hit@1 51 %, MRR 0.62) |
-| **Verification with the right abstracts given** (3 classes; always answering the majority class scores 41 %) | accuracy **55 %**, macro-F1 0.51 |
-| **End to end**, MiniLM (retrieve from 5,183 abstracts, then verify) | accuracy **48 %**, macro-F1 0.45 |
+| Verifier (same MiniLM retrieval) | Verification given the right abstracts | End to end | Abstract Label-Only F1, open |
+|---|---|---|---|
+| Off-the-shelf NLI | 55 % | 48 % | 0.30 |
+| Fine-tuned on SciFact (+ hard negatives) | 64 % | **60 %** | **0.41** |
 
-What this says, without flattering it:
+Always answering the majority class scores 41 %. Retrieval alone finds a gold abstract in the top 5
+for **90 %** of the claims.
 
-- **Retrieval works; the verifier is the bottleneck.** When the verifier says `SUPPORTED` it is
-  right 92 % of the time (33 of 36), but it finds only 27 % of the supported claims: 78 of the 124
-  come out as `NOT_ENOUGH_INFO`. For 73 of those 78, evidence windows were found and the NLI model
-  just did not see an entailment (median top probability 0.10): SciFact claims are paraphrases of
-  biomedical findings, and a small general-purpose NLI model is not enough.
-- The conservative design (refuse to guess) is why precision is high and recall low. It is the
-  right failure mode for a fact-checker, but on this benchmark it costs accuracy.
-- End to end the system is only about 6 points above always answering the majority class. **It is
-  not a strong verifier yet**; fine-tuning the NLI model on SciFact's training split is the next step.
-- With 300 claims, an accuracy of 50 % carries a ±6 point margin (95 % interval): do not read
-  differences of a few points. Single deterministic run, abstract-level labels (sentence-level
-  rationales are not scored), no comparison with published systems.
+**Against published systems** (same metric, Abstract Label-Only F1, open setting): this project
+41, the first SciFact baseline (VeriSci) 51 on dev, recent systems 68-73 (ParagraphJoint,
+VerT5erini, MultiVerS; 360 M to 5.6 B parameters, GPU). With the right abstracts given: 57-61
+against 74-82. So the light system (105 M parameters in total, 0.3 s per claim on 4 CPU cores)
+**does not compete on accuracy**: it is in the range of the first baseline, about 4 times smaller
+than MultiVerS, and far from the best systems. Its case is cost and transparency, not accuracy.
+The numbers are not strictly comparable (my own implementation of the metric, validation rather
+than the hidden test set, one run).
 
-Full tables, confusion matrices and the exact setup: [`docs/evaluation.md`](docs/evaluation.md);
-raw results: [`docs/results/`](docs/results/).
+What else the measurements say:
+
+- Adding 29,000 unrelated abstracts (6.6 times the corpus) costs about 3 points of top-5 retrieval
+  and leaves the verification results unchanged: what matters is that the corpus *contains the
+  evidence*, not its size. Enrich it by topic, not in bulk.
+- Recall is the weak side: the verifier prefers `NOT_ENOUGH_INFO` to a guess (with the right abstracts
+  given, when it says `SUPPORTED` it was right 59 times out of 59, but it finds only half of the
+  supported claims).
+- With 300 claims, an accuracy near 50-60 % carries a margin of about +/-6 points; a single seed.
+
+Setup, per-class tables, training details, sources of the published numbers, the corpus-size
+experiment and the limits of this comparison: [`docs/evaluation.md`](docs/evaluation.md). Raw
+results: [`docs/results/`](docs/results/).
 
 ### Retrieval metrics on your own corpus
 
@@ -235,7 +242,8 @@ experimental, not covered by CI).
   not ground truth. Conflicting evidence (strong support *and* strong contradiction) yields
   `NOT_ENOUGH_INFO` rather than a guess. Checked by hand on 7 claims over 10 papers: no
   confidently wrong verdict, 2 conservative `NOT_ENOUGH_INFO` — a sanity check. The SciFact
-  benchmark (above) is the real measurement: 55 % accuracy given the right abstracts.
+  benchmark (above) is the real measurement: 60 % end-to-end accuracy with the fine-tuned verifier,
+  48 % with the off-the-shelf model.
 - Answer verification is a **filter, not a guarantee**: on a handful of cases it flagged the invented
   sentences of a 0.5B model and confirmed a faithful answer, but it can miss an invented clause
   inside an otherwise supported sentence, and flag faithful sentences that combine facts spread

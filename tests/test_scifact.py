@@ -154,3 +154,40 @@ def test_parquet_roundtrip(tmp_path):
     pq.write_table(pa.Table.from_pylist(ROWS), path)
     assert scifact.read_parquet(path)[0]["claim"] == "a supported claim"
     assert len(scifact.build_claims(scifact.read_parquet(path))) == 3
+
+
+def test_abstract_label_report_is_micro_prf1():
+    claims = [
+        scifact.Claim(1, "c1", S, ("10", "11"), ("10",)),
+        scifact.Claim(2, "c2", R, ("20",), ("20",)),
+        scifact.Claim(3, "c3", N, ("30",), ()),
+    ]
+    preds = [
+        (1, "10", S),  # correct
+        (1, "11", S),  # wrong abstract (no evidence in it)
+        (2, "20", S),  # right abstract, wrong label
+        (3, "30", N),  # NEI is not a prediction
+    ]
+    rep = scifact.abstract_label_report(preds, claims)
+    assert (rep["predicted"], rep["gold"], rep["correct"]) == (3, 2, 1)
+    assert rep["precision"] == pytest.approx(1 / 3, abs=1e-4)
+    assert rep["recall"] == 0.5
+    assert rep["f1"] == pytest.approx(0.4, abs=1e-4)
+
+
+def test_abstract_predictions_judge_each_abstract_alone_and_cache():
+    docs = [
+        Document("10", "Quantization reduces model size a lot.", "A"),
+        Document("20", "Birds sing in the morning.", "B"),
+    ]
+    claim = scifact.Claim(1, "quantization reduces model size", S, ("10", "20"), ("10",))
+    verifier, cache = StubVerifier(), {}
+    out = scifact.abstract_predictions(
+        [claim], [["10", "20", "99"]], docs, verifier, chunk_size=50, chunk_overlap=5, cache=cache
+    )
+    assert out == [(1, "10", S), (1, "20", N)]  # unknown id "99" is skipped
+    n_calls = len(verifier.calls)
+    scifact.abstract_predictions(
+        [claim], [["10"]], docs, verifier, chunk_size=50, chunk_overlap=5, cache=cache
+    )
+    assert len(verifier.calls) == n_calls  # second pass came from the cache
