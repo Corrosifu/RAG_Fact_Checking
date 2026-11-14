@@ -1,0 +1,596 @@
+{
+  "setup": {
+    "embedder": "sentence-transformers/all-MiniLM-L6-v2",
+    "generator": "extractive",
+    "verifier": "cross-encoder/nli-MiniLM2-L6-H768",
+    "chunk_size": 70,
+    "chunk_overlap": 25,
+    "top_k": 3,
+    "items": 30
+  },
+  "summary": {
+    "items": 30,
+    "by_kind": {
+      "factual": 8,
+      "multi_doc": 3,
+      "yes_no": 3,
+      "numeric": 3,
+      "unanswerable": 4,
+      "claim": 9
+    },
+    "retrieval": {
+      "hit": 1.0,
+      "context_recall": 1.0,
+      "context_precision": 0.3718
+    },
+    "answer": {
+      "f1": 0.3752,
+      "contains": 0.7059,
+      "relevancy": 0.6322,
+      "yes_no_parse_rate": 0.0,
+      "yes_no_accuracy": null
+    },
+    "faithfulness": 0.2698,
+    "abstention": {
+      "rate": 0.5,
+      "false_rate": 0.6471
+    },
+    "claims": {
+      "accuracy": 0.7778,
+      "recall_by_verdict": {
+        "SUPPORTED": 0.6667,
+        "REFUTED": 0.6667,
+        "NOT_ENOUGH_INFO": 1.0
+      }
+    },
+    "latency": {
+      "ask.generate": {
+        "mean_ms": 0.44,
+        "p50_ms": 0.4,
+        "p95_ms": 0.57
+      },
+      "ask.retrieve": {
+        "mean_ms": 5.99,
+        "p50_ms": 5.67,
+        "p95_ms": 6.68
+      },
+      "ask.verify": {
+        "mean_ms": 676.25,
+        "p50_ms": 194.92,
+        "p95_ms": 1092.47
+      },
+      "claim.retrieve": {
+        "mean_ms": 6.54,
+        "p50_ms": 6.37,
+        "p95_ms": 8.12
+      },
+      "claim.verify": {
+        "mean_ms": 42.16,
+        "p50_ms": 32.68,
+        "p95_ms": 93.73
+      }
+    }
+  },
+  "records": [
+    {
+      "id": "f1",
+      "kind": "factual",
+      "text": "What default decay rates does the Adam optimizer use?",
+      "answer": "It keeps exponential moving averages of the gradient and of its square, with default decay rates of 0.9 and 0.999. [1] Adam combines momentum with per-parameter adaptive learning rates. [1]",
+      "abstained": true,
+      "faithfulness": 0.0,
+      "f1": 0.1818,
+      "contains": true,
+      "relevancy": 0.7062,
+      "hit": true,
+      "context_precision": 0.3333333333333333,
+      "context_recall": 1.0,
+      "timings": {
+        "retrieve": 0.011947,
+        "generate": 0.000944,
+        "verify": 8.853103
+      }
+    },
+    {
+      "id": "f2",
+      "kind": "factual",
+      "text": "What does batch normalization use at inference time instead of batch statistics?",
+      "answer": "At inference time it uses running averages collected during training instead of batch statistics. [1]",
+      "abstained": true,
+      "faithfulness": 0.0,
+      "f1": 0.5,
+      "contains": true,
+      "relevancy": 0.6954,
+      "hit": true,
+      "context_precision": 0.3333333333333333,
+      "context_recall": 1.0,
+      "timings": {
+        "retrieve": 0.006362,
+        "generate": 0.000406,
+        "verify": 0.447339
+      }
+    },
+    {
+      "id": "f3",
+      "kind": "factual",
+      "text": "How does byte pair encoding build its vocabulary?",
+      "answer": "Byte pair encoding builds a subword vocabulary by repeatedly merging the most frequent pair of adjacent symbols. [1]",
+      "abstained": true,
+      "faithfulness": 0.0,
+      "f1": 0.72,
+      "contains": true,
+      "relevancy": 0.801,
+      "hit": true,
+      "context_precision": 0.3333333333333333,
+      "context_recall": 1.0,
+      "timings": {
+        "retrieve": 0.0055,
+        "generate": 0.000474,
+        "verify": 1.092473
+      }
+    },
+    {
+      "id": "f4",
+      "kind": "factual",
+      "text": "Why are cross-encoders applied only to the top candidates?",
+      "answer": "Rerankers are therefore applied only to the top 20 to 100 candidates returned by a first-stage retriever. [1]",
+      "abstained": false,
+      "faithfulness": 1.0,
+      "f1": 0.0,
+      "contains": false,
+      "relevancy": 0.3136,
+      "hit": true,
+      "context_precision": 0.3333333333333333,
+      "context_recall": 1.0,
+      "timings": {
+        "retrieve": 0.00548,
+        "generate": 0.000315,
+        "verify": 0.645763
+      }
+    },
+    {
+      "id": "f5",
+      "kind": "factual",
+      "text": "What does temperature scaling do to the logits?",
+      "answer": "Temperature scaling divides the logits by a single learned scalar and is a simple post-hoc fix. [1]",
+      "abstained": true,
+      "faithfulness": 0.0,
+      "f1": 0.5714,
+      "contains": true,
+      "relevancy": 0.7295,
+      "hit": true,
+      "context_precision": 0.3333333333333333,
+      "context_recall": 1.0,
+      "timings": {
+        "retrieve": 0.005986,
+        "generate": 0.000523,
+        "verify": 0.297037
+      }
+    },
+    {
+      "id": "f6",
+      "kind": "factual",
+      "text": "What does the parameter efSearch trade off in HNSW?",
+      "answer": "The parameter efSearch trades recall for speed. [1]",
+      "abstained": true,
+      "faithfulness": 0.0,
+      "f1": 0.6,
+      "contains": true,
+      "relevancy": 0.6291,
+      "hit": true,
+      "context_precision": 0.3333333333333333,
+      "context_recall": 1.0,
+      "timings": {
+        "retrieve": 0.006355,
+        "generate": 0.000361,
+        "verify": 0.570998
+      }
+    },
+    {
+      "id": "f7",
+      "kind": "factual",
+      "text": "How do stratified folds split the data in cross-validation?",
+      "answer": "Stratified folds keep the class proportions identical in every fold. [1] In k-fold cross-validation the data is split into k parts, and each part serves once as the validation set. [1]",
+      "abstained": true,
+      "faithfulness": 0.0,
+      "f1": 0.3784,
+      "contains": true,
+      "relevancy": 0.8127,
+      "hit": true,
+      "context_precision": 0.3333333333333333,
+      "context_recall": 1.0,
+      "timings": {
+        "retrieve": 0.005519,
+        "generate": 0.000465,
+        "verify": 0.475297
+      }
+    },
+    {
+      "id": "f8",
+      "kind": "factual",
+      "text": "Why can accuracy be misleading on imbalanced data?",
+      "answer": "On imbalanced data, accuracy can be misleading because a model that always predicts the majority class scores high. [1]",
+      "abstained": false,
+      "faithfulness": 1.0,
+      "f1": 0.64,
+      "contains": true,
+      "relevancy": 0.7912,
+      "hit": true,
+      "context_precision": 0.3333333333333333,
+      "context_recall": 1.0,
+      "timings": {
+        "retrieve": 0.005602,
+        "generate": 0.000572,
+        "verify": 0.35475
+      }
+    },
+    {
+      "id": "m1",
+      "kind": "multi_doc",
+      "text": "How do cross-encoders and bi-encoders differ in speed and accuracy?",
+      "answer": "A cross-encoder reads the query and a passage together in a single Transformer pass and outputs a relevance score. [3] It is more accurate than a bi-encoder but far slower, because nothing can be precomputed. [3] A bi-encoder embeds queries and documents independently, so document vectors can be computed once and stored in an index. [2]",
+      "abstained": false,
+      "faithfulness": 0.3333333333333333,
+      "f1": 0.381,
+      "contains": false,
+      "relevancy": 0.5948,
+      "hit": true,
+      "context_precision": 0.6666666666666666,
+      "context_recall": 1.0,
+      "timings": {
+        "retrieve": 0.006684,
+        "generate": 0.000396,
+        "verify": 0.114975
+      }
+    },
+    {
+      "id": "m2",
+      "kind": "multi_doc",
+      "text": "Which techniques use 16-bit or 8-bit numbers to make models cheaper?",
+      "answer": "Post-training quantization converts the weights of a trained model from 32-bit floats to 8-bit integers, shrinking the model size by about 4 times. [1]",
+      "abstained": true,
+      "faithfulness": 0.0,
+      "f1": 0.5455,
+      "contains": false,
+      "relevancy": 0.3954,
+      "hit": true,
+      "context_precision": 0.6666666666666666,
+      "context_recall": 1.0,
+      "timings": {
+        "retrieve": 0.005774,
+        "generate": 0.000341,
+        "verify": 0.254597
+      }
+    },
+    {
+      "id": "m3",
+      "kind": "multi_doc",
+      "text": "Name two regularization methods for neural networks.",
+      "answer": "A common side effect is a mild regularization effect. [2] The regularization strength is a hyperparameter usually chosen by validation. [1] The technique reduces co-adaptation between neurons and is a cheap form of regularization. [3]",
+      "abstained": false,
+      "faithfulness": 0.3333333333333333,
+      "f1": 0.0625,
+      "contains": false,
+      "relevancy": 0.437,
+      "hit": true,
+      "context_precision": 0.6666666666666666,
+      "context_recall": 1.0,
+      "timings": {
+        "retrieve": 0.00519,
+        "generate": 0.000338,
+        "verify": 0.169208
+      }
+    },
+    {
+      "id": "y1",
+      "kind": "yes_no",
+      "text": "Does dropout zero random units at test time like it does during training?",
+      "answer": "Dropout randomly sets a fraction of the activations to zero during training, commonly 0.5 for fully connected layers. [1] At test time all units are active and the outputs are scaled accordingly. [1] At inference time it uses running averages collected during training instead of batch statistics. [3]",
+      "abstained": true,
+      "faithfulness": 0.0,
+      "f1": 0.4211,
+      "contains": true,
+      "relevancy": 0.7133,
+      "yes_no_parsed": false,
+      "yes_no_correct": null,
+      "hit": true,
+      "context_precision": 0.3333333333333333,
+      "context_recall": 1.0,
+      "timings": {
+        "retrieve": 0.005915,
+        "generate": 0.000423,
+        "verify": 0.142667
+      }
+    },
+    {
+      "id": "y2",
+      "kind": "yes_no",
+      "text": "Is BERT a decoder-only model?",
+      "answer": "GPT models are decoder-only Transformers trained to predict the next token. [3]",
+      "abstained": true,
+      "faithfulness": 0.0,
+      "f1": 0.1176,
+      "contains": false,
+      "relevancy": 0.441,
+      "yes_no_parsed": false,
+      "yes_no_correct": null,
+      "hit": true,
+      "context_precision": 0.3333333333333333,
+      "context_recall": 1.0,
+      "timings": {
+        "retrieve": 0.005281,
+        "generate": 0.000368,
+        "verify": 0.037747
+      }
+    },
+    {
+      "id": "y3",
+      "kind": "yes_no",
+      "text": "Does Adam add a small constant to the denominator?",
+      "answer": "A small constant of 1e-8 is added to the denominator for numerical stability. [1]",
+      "abstained": false,
+      "faithfulness": 1.0,
+      "f1": 0.8182,
+      "contains": true,
+      "relevancy": 0.4548,
+      "yes_no_parsed": false,
+      "yes_no_correct": null,
+      "hit": true,
+      "context_precision": 0.3333333333333333,
+      "context_recall": 1.0,
+      "timings": {
+        "retrieve": 0.005249,
+        "generate": 0.000409,
+        "verify": 0.026641
+      }
+    },
+    {
+      "id": "n1",
+      "kind": "numeric",
+      "text": "How many layers does the BERT base model have?",
+      "answer": "The base model has 12 layers and 110 million parameters, while the large model has 24 layers and 340 million parameters. [1]",
+      "abstained": false,
+      "faithfulness": 1.0,
+      "f1": 0.0952,
+      "contains": true,
+      "relevancy": 0.6187,
+      "hit": true,
+      "context_precision": 0.3333333333333333,
+      "context_recall": 1.0,
+      "timings": {
+        "retrieve": 0.005167,
+        "generate": 0.000498,
+        "verify": 0.130574
+      }
+    },
+    {
+      "id": "n2",
+      "kind": "numeric",
+      "text": "What is the common dropout rate for fully connected layers?",
+      "answer": "Dropout randomly sets a fraction of the activations to zero during training, commonly 0.5 for fully connected layers. [1]",
+      "abstained": true,
+      "faithfulness": 0.0,
+      "f1": 0.1111,
+      "contains": true,
+      "relevancy": 0.7109,
+      "hit": true,
+      "context_precision": 0.3333333333333333,
+      "context_recall": 1.0,
+      "timings": {
+        "retrieve": 0.005764,
+        "generate": 0.000337,
+        "verify": 0.025986
+      }
+    },
+    {
+      "id": "n3",
+      "kind": "numeric",
+      "text": "How many entries does the attention matrix have for a sequence of 4,096 tokens?",
+      "answer": "For a sequence of 4,096 tokens the attention matrix has about 16.8 million entries per head. [1]",
+      "abstained": true,
+      "faithfulness": 0.0,
+      "f1": 0.2353,
+      "contains": true,
+      "relevancy": 0.9034,
+      "hit": true,
+      "context_precision": 0.3333333333333333,
+      "context_recall": 1.0,
+      "timings": {
+        "retrieve": 0.005747,
+        "generate": 0.000454,
+        "verify": 0.194922
+      }
+    },
+    {
+      "id": "u1",
+      "kind": "unanswerable",
+      "text": "What learning rate does the original BERT paper use for fine-tuning?",
+      "answer": "Learning rate warmup increases the learning rate linearly from a small value over the first steps of training. [1]",
+      "abstained": true,
+      "faithfulness": 0.0,
+      "context_recall": null,
+      "timings": {
+        "retrieve": 0.005509,
+        "generate": 0.000404,
+        "verify": 0.024404
+      }
+    },
+    {
+      "id": "u2",
+      "kind": "unanswerable",
+      "text": "Who invented the Adam optimizer?",
+      "answer": "Adam combines momentum with per-parameter adaptive learning rates. [1] Without warmup, large models can diverge early because the optimizer statistics are still unreliable. [2]",
+      "abstained": false,
+      "faithfulness": 0.5,
+      "context_recall": null,
+      "timings": {
+        "retrieve": 0.005267,
+        "generate": 0.000382,
+        "verify": 0.063004
+      }
+    },
+    {
+      "id": "u3",
+      "kind": "unanswerable",
+      "text": "How many GPUs are needed to train GPT models?",
+      "answer": "GPT models are decoder-only Transformers trained to predict the next token. [1] On recent GPUs it can roughly double throughput and halves activation memory. [2]",
+      "abstained": false,
+      "faithfulness": 0.5,
+      "context_recall": null,
+      "timings": {
+        "retrieve": 0.005914,
+        "generate": 0.000339,
+        "verify": 0.056174
+      }
+    },
+    {
+      "id": "u4",
+      "kind": "unanswerable",
+      "text": "Which publisher released the book Deep Learning?",
+      "answer": "Adam combines momentum with per-parameter adaptive learning rates. [2] Transfer learning reuses a network pre-trained on a large dataset such as ImageNet. [1] Learning rate warmup increases the learning rate linearly from a small value over the first steps of training. [3]",
+      "abstained": true,
+      "faithfulness": 0.0,
+      "context_recall": null,
+      "timings": {
+        "retrieve": 0.00567,
+        "generate": 0.00039,
+        "verify": 0.223521
+      }
+    },
+    {
+      "id": "c1",
+      "kind": "claim",
+      "text": "BERT masks about 15 percent of the input tokens.",
+      "verdict": "SUPPORTED",
+      "expected_verdict": "SUPPORTED",
+      "correct": true,
+      "hit": true,
+      "context_precision": 0.3333333333333333,
+      "context_recall": 1.0,
+      "timings": {
+        "retrieve": 0.006727,
+        "verify": 0.067512
+      }
+    },
+    {
+      "id": "c2",
+      "kind": "claim",
+      "text": "Dropout reduces co-adaptation between neurons.",
+      "verdict": "SUPPORTED",
+      "expected_verdict": "SUPPORTED",
+      "correct": true,
+      "hit": true,
+      "context_precision": 0.3333333333333333,
+      "context_recall": 1.0,
+      "timings": {
+        "retrieve": 0.006374,
+        "verify": 0.028359
+      }
+    },
+    {
+      "id": "c3",
+      "kind": "claim",
+      "text": "BM25 uses a length normalization parameter b that is commonly 0.75.",
+      "verdict": "NOT_ENOUGH_INFO",
+      "expected_verdict": "SUPPORTED",
+      "correct": false,
+      "hit": true,
+      "context_precision": 0.3333333333333333,
+      "context_recall": 1.0,
+      "timings": {
+        "retrieve": 0.006962,
+        "verify": 0.111202
+      }
+    },
+    {
+      "id": "c4",
+      "kind": "claim",
+      "text": "Dropout is applied to the output layer.",
+      "verdict": "REFUTED",
+      "expected_verdict": "REFUTED",
+      "correct": true,
+      "hit": true,
+      "context_precision": 0.3333333333333333,
+      "context_recall": 1.0,
+      "timings": {
+        "retrieve": 0.005598,
+        "verify": 0.022769
+      }
+    },
+    {
+      "id": "c5",
+      "kind": "claim",
+      "text": "Post-training quantization shrinks the model size by about 2 times.",
+      "verdict": "NOT_ENOUGH_INFO",
+      "expected_verdict": "REFUTED",
+      "correct": false,
+      "hit": true,
+      "context_precision": 0.3333333333333333,
+      "context_recall": 1.0,
+      "timings": {
+        "retrieve": 0.006135,
+        "verify": 0.032496
+      }
+    },
+    {
+      "id": "c6",
+      "kind": "claim",
+      "text": "A vocabulary of 3,200 merges is typical for translation systems.",
+      "verdict": "REFUTED",
+      "expected_verdict": "REFUTED",
+      "correct": true,
+      "hit": true,
+      "context_precision": 0.3333333333333333,
+      "context_recall": 1.0,
+      "timings": {
+        "retrieve": 0.008553,
+        "verify": 0.032684
+      }
+    },
+    {
+      "id": "c7",
+      "kind": "claim",
+      "text": "Dropout was invented in 2014.",
+      "verdict": "NOT_ENOUGH_INFO",
+      "expected_verdict": "NOT_ENOUGH_INFO",
+      "correct": true,
+      "hit": true,
+      "context_precision": 0.3333333333333333,
+      "context_recall": null,
+      "timings": {
+        "retrieve": 0.005698,
+        "verify": 0.000366
+      }
+    },
+    {
+      "id": "c8",
+      "kind": "claim",
+      "text": "Adam was the first adaptive optimizer.",
+      "verdict": "NOT_ENOUGH_INFO",
+      "expected_verdict": "NOT_ENOUGH_INFO",
+      "correct": true,
+      "hit": true,
+      "context_precision": 0.3333333333333333,
+      "context_recall": null,
+      "timings": {
+        "retrieve": 0.005344,
+        "verify": 0.047506
+      }
+    },
+    {
+      "id": "c9",
+      "kind": "claim",
+      "text": "BM25 outperforms dense retrieval on every benchmark.",
+      "verdict": "NOT_ENOUGH_INFO",
+      "expected_verdict": "NOT_ENOUGH_INFO",
+      "correct": true,
+      "hit": true,
+      "context_precision": 0.3333333333333333,
+      "context_recall": null,
+      "timings": {
+        "retrieve": 0.007459,
+        "verify": 0.036551
+      }
+    }
+  ]
+}

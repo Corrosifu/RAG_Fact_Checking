@@ -202,6 +202,17 @@ Setup, per-class tables, training details, sources of the published numbers, the
 experiment and the limits of this comparison: [`docs/evaluation.md`](docs/evaluation.md). Raw
 results: [`docs/results/`](docs/results/).
 
+### End-to-end evaluation
+
+`ragfc e2e` runs the whole pipeline (question to retrieval to answer to answer check, and claim to
+verdict) on a golden set of 30 questions with reference answers, and scores retrieval, answer
+correctness, faithfulness, abstention on unanswerable questions, claim verdicts and latency per
+stage, without an LLM judge. A deterministic variant runs in CI and fails if a score drops by more
+than 0.05 below `tests/e2e/baseline.json`. With real models it shows that the extractive generator
+never declines an unanswerable question and that the off-the-shelf NLI model leaves 73 % of the sentences of faithful
+answers unconfirmed; the fine-tuned model does much better. Details, metrics and limits:
+[`docs/e2e.md`](docs/e2e.md).
+
 ### Retrieval metrics on your own corpus
 
 `ragfc eval` reports **hit-rate@k, recall@k and MRR** from a JSONL test set

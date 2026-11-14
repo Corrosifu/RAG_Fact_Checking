@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from time import perf_counter
+
 from rag_fact_checking.answer_check import check_answer
 from rag_fact_checking.config import Settings
 from rag_fact_checking.embeddings import build_embedder
@@ -64,28 +66,56 @@ class RAGPipeline:
         ``verify`` overrides the ``verify_answers`` setting for this call. Verification is
         skipped when there is no verifier or the answer is the "no evidence" fallback.
         """
+        return self.ask_timed(query, top_k, verify)[0]
+
+    def ask_timed(
+        self, query: str, top_k: int | None = None, verify: bool | None = None
+    ) -> tuple[Answer, dict[str, float]]:
+        """Like :meth:`ask`, also returning the seconds spent in each stage.
+
+        The keys are ``retrieve``, ``generate`` and ``verify`` (0.0 when verification is skipped).
+        """
+        start = perf_counter()
         hits = self.retriever.retrieve(query, top_k or self.top_k)
+        retrieved = perf_counter()
         text = self.generator.generate(query, hits, max_new_tokens=self.max_new_tokens)
+        generated = perf_counter()
         should_verify = self.verify_answers if verify is None else verify
         checks = []
+        verify_seconds = 0.0
         if should_verify and self.verifier is not None and text != NO_EVIDENCE:
             checks = check_answer(text, hits, self.verifier, self.nli_threshold)
-        return Answer(text, [to_source(h) for h in hits], checks)
+            verify_seconds = perf_counter() - generated
+        timings = {
+            "retrieve": retrieved - start,
+            "generate": generated - retrieved,
+            "verify": verify_seconds,
+        }
+        return Answer(text, [to_source(h) for h in hits], checks), timings
 
     def fact_check(self, claim: str, top_k: int | None = None) -> FactCheckResult:
+        return self.fact_check_timed(claim, top_k)[0]
+
+    def fact_check_timed(
+        self, claim: str, top_k: int | None = None
+    ) -> tuple[FactCheckResult, dict[str, float]]:
+        """Like :meth:`fact_check`, also returning the seconds of ``retrieve`` and ``verify``."""
         if self.verifier is None:
             raise VerifierNotConfigured(
                 "Fact-checking needs an NLI model: set RAGFC_VERIFIER=nli "
                 "(requires the 'ml' extra)."
             )
+        start = perf_counter()
         hits = self.retriever.retrieve(claim, top_k or self.top_k)
+        retrieved = perf_counter()
         verdict, confidence, premises, probs = verify_claim(
             claim, hits, self.verifier, self.nli_threshold
         )
-        return FactCheckResult(
+        result = FactCheckResult(
             claim,
             verdict,
             round(confidence, 4),
             [to_source(h) for h in hits],
             to_evidence_sentences(premises, probs, self.nli_threshold),
         )
+        return result, {"retrieve": retrieved - start, "verify": perf_counter() - retrieved}

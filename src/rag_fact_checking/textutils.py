@@ -36,12 +36,17 @@ def strip_title(text: str, title: str, min_words: int = 3) -> str:
     """Remove the document title, which PDF extraction repeats as page headers.
 
     Short titles (< ``min_words`` words) are left alone: they are too likely to be ordinary
-    words that must stay in the evidence (a title like "Attention" or "T").
+    words that must stay in the evidence (a title like "Attention" or "T"). A title directly
+    followed by a lower-case word is the subject of a sentence ("Byte pair encoding builds a
+    vocabulary..."), not a page header, and is kept: stripping it would leave "builds a
+    vocabulary...".
     """
     title = " ".join(title.split())
     if len(title.split()) < min_words:
         return text
-    return re.sub(rf"(?<!\w){re.escape(title)}(?!\w)", " ", text, flags=re.IGNORECASE)
+    return re.sub(
+        rf"(?<!\w){re.escape(title)}(?!\w)(?!(?-i:\s+[a-z]))", " ", text, flags=re.IGNORECASE
+    )
 
 
 def split_sentences(text: str) -> list[str]:

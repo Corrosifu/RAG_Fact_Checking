@@ -100,6 +100,15 @@ def test_short_titles_do_not_erase_words_from_evidence():
     assert "Where" not in long and "Body text." in long
 
 
+def test_a_title_that_starts_a_sentence_is_kept():
+    from rag_fact_checking.textutils import strip_title
+
+    text = "Byte pair encoding builds a subword vocabulary. Rare words are split."
+    assert strip_title(text, "Byte pair encoding") == text  # subject of the sentence
+    header = "Byte pair encoding\nRare words are split into pieces."
+    assert "Byte" not in strip_title(header, "Byte pair encoding")  # page header: removed
+
+
 def test_premises_keep_their_origin():
     h = Hit(Chunk("paper#3", "paper", 3, "Kaczmarz solves large linear systems iteratively."), 1.0)
     prem = select_premises("Kaczmarz solves linear systems.", [h])
